@@ -14,19 +14,27 @@ const checkToken = require("../middleware/checkToken");
 const checkAuthrization = require("../middleware/checkAuthrization");
 
 //admin company CRUD router
-router.post("/addCompany", AdminController.postAddCompany);
+//router.post("/addtheCompany", AdminController.postAddCompany);
+router.post(
+  "/addCompany",
+  checkToken,
+  checkAuthrization,
+  AdminController.postAddCompany
+);
 router.get(
   "/listCompanies",
   checkToken,
   checkAuthrization,
   AdminController.listCompanies
 );
+
 router.delete(
   "/removeCompany/:Cid",
   checkToken,
   checkAuthrization,
   AdminController.removeCompany
 );
+
 router.patch(
   "/editCompany/:Cid",
   checkToken,
@@ -48,6 +56,12 @@ router.patch(
   checkToken,
   checkAuthrization,
   AdminController.editHr
+);
+router.get(
+  "/viewHr/:Hid",
+  checkToken,
+  checkAuthrization,
+  AdminController.viewHr
 );
 
 //admin Job CRUD router
@@ -117,5 +131,6 @@ router.patch(
 //admin creation and login
 router.post("/createOnce", AdminController.createOnce);
 router.post("/adminlogin", AdminController.adminlogin);
+router.get("/ViewCompany/:Cid", AdminController.ViewCompany);
 
 module.exports = router;

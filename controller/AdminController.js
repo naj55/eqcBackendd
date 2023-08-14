@@ -145,6 +145,39 @@ exports.editCompany = (req, res) => {
     });
 };
 
+exports.editC = (req, res) => {
+  const Cid = req.params.Cid;
+  companyNameInput = req.body.companyName;
+  emailInput = req.body.email;
+  phoneInput = req.body.phone;
+  addressInput = req.body.address;
+  companyBusinessInput = req.body.companyBusiness;
+  companySizeInput = req.body.companySize;
+  companyAddedInput = req.body.companyAdded;
+
+  Company.findById(Cid)
+    .then((foundedCompany) => {
+      foundedCompany.companyName = companyNameInput;
+      foundedCompany.email = emailInput;
+      foundedCompany.phone = phoneInput;
+      foundedCompany.address = addressInput;
+      foundedCompany.companyBusiness = companyBusinessInput;
+      foundedCompany.companySize = companySizeInput;
+      foundedCompany.companyAdded = companyAddedInput;
+
+      foundedCompany
+        .save()
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
 //admin HR CRUD controller
 //admin HR add hr
 exports.postAddHr = async (req, res) => {
@@ -220,6 +253,19 @@ exports.editHr = (req, res) => {
         .catch((err) => {
           res.status(401).json(err);
         });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+//view one hr
+exports.viewHr = (req, res) => {
+  const Hid = req.params.Hid;
+  Hr.findById(Hid)
+    .populate("company")
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -459,6 +505,17 @@ exports.StateRejected = (req, res) => {
         console.log(result);
         res.status(200).json(result);
       });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.ViewCompany = (req, res) => {
+  const Cid = req.params.Cid;
+  Company.findById(Cid)
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
       res.status(401).json(err);

@@ -23,6 +23,7 @@ exports.postAddJob = (req, res) => {
   departmentInput = req.body.department;
   skillsInput = req.body.skills;
   notesInput = req.body.notes;
+  description = req.body.description;
   jobRequirmentInput = req.body.jobRequirment;
   companyInput = req.body.company;
   HrInput = HId;
@@ -34,6 +35,7 @@ exports.postAddJob = (req, res) => {
     department: departmentInput,
     skills: skillsInput,
     notes: notesInput,
+    description: description,
     jobRequirment: jobRequirmentInput,
     company: companyInput,
     Hr: HrInput,
@@ -63,7 +65,7 @@ exports.listJobs = (req, res) => {
 //hr active job List job
 exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  Job.findOne({ Hr: HId })
+  Job.find({ Hr: HId })
     .then((result) => {
       res.status(200).json(result);
     })
@@ -197,6 +199,19 @@ exports.ViewCv = (req, res) => {
   Section.find({ graduated: GId })
     .then((result) => {
       console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+//hr job List job
+exports.ViewJob = (req, res) => {
+  const JId = req.params.id;
+  Job.findById(JId)
+    .populate("company")
+    .then((result) => {
       res.status(200).json(result);
     })
     .catch((err) => {
