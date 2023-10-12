@@ -5,11 +5,9 @@ const JobSchema = new schema(
     jobname: { type: String },
     sdate: {
       type: Date,
-      default: Date.now,
     },
     edate: {
       type: Date,
-      default: Date.now,
     },
     department: { type: String },
     description: { type: String },

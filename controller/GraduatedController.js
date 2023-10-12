@@ -69,9 +69,11 @@ exports.listJobs = (req, res) => {
   const today = new Date();
   const availableJobs = [];
   Job.find()
+    .populate("company")
     .then((result) => {
+      console.log(result);
       for (r of result) {
-        if (today < r.edate) {
+        if (today <= r.edate) {
           availableJobs.push(r);
         }
       }
@@ -108,7 +110,7 @@ exports.applyJob = (req, res) => {
 //list for all job that has been applyed
 exports.applyedJob = async (req, res) => {
   const GId = res.locals.decoder.result._id;
-  Application.findOne({ Graduated: GId })
+  Application.find({ Graduated: GId })
     .populate({
       path: "Job",
       select: "jobname",
@@ -249,6 +251,33 @@ exports.createCv = (req, res) => {
   const GId = res.locals.decoder.result._id;
   Section.find({ graduated: GId })
     .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+//hr job List job
+exports.ViewJob = (req, res) => {
+  const JId = req.params.Jid;
+  Job.findById(JId)
+    .populate("company")
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.ViewGraduate = (req, res) => {
+  const Gid = res.locals.decoder.result._id;
+  console.log(Gid);
+  console.log("the graduated is ");
+  Graduated.findById(Gid)
+    .then((result) => {
+      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {

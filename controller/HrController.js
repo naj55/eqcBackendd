@@ -17,6 +17,8 @@ exports.postAddJob = (req, res) => {
   const D = res.locals.decoder;
   const HId = res.locals.decoder.result._id;
 
+  console.log(res.locals.decoder);
+
   NameInput = req.body.jobname;
   sdateInput = req.body.sdate;
   edateInput = req.body.edate;
@@ -25,7 +27,7 @@ exports.postAddJob = (req, res) => {
   notesInput = req.body.notes;
   description = req.body.description;
   jobRequirmentInput = req.body.jobRequirment;
-  companyInput = req.body.company;
+  c = res.locals.decoder.result.company;
   HrInput = HId;
 
   const newJob = new Job({
@@ -37,7 +39,7 @@ exports.postAddJob = (req, res) => {
     notes: notesInput,
     description: description,
     jobRequirment: jobRequirmentInput,
-    company: companyInput,
+    company: c,
     Hr: HrInput,
   });
   newJob

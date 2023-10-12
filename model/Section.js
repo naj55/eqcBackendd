@@ -30,7 +30,7 @@ const SectionSchema = new schema(
       type: Date,
     },
     hours: {
-      type: Date,
+      type: String,
     },
     Describtion: {
       type: Number,

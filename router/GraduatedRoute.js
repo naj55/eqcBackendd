@@ -19,7 +19,7 @@ router.post("/GraduatedSignUp", GraduatedController.GraduatedSignUp);
 router.post("/GraduatedLogin", GraduatedController.GraduatedLogin);
 // //Hr Job CRUD router
 router.get("/listJobs", checkToken, GraduatedController.listJobs);
-router.patch("/applyJob/:Jid", checkToken, GraduatedController.applyJob);
+router.get("/applyJob/:Jid", checkToken, GraduatedController.applyJob);
 router.get("/applyedJob", checkToken, GraduatedController.applyedJob);
 //create cv
 router.post("/education", checkToken, GraduatedController.educationSection);
@@ -31,6 +31,8 @@ router.post(
   checkToken,
   GraduatedController.volunteeringSection
 );
-router.post("/createCv", checkToken, GraduatedController.createCv);
+router.get("/ViewJob/:Jid", checkToken, GraduatedController.ViewJob);
+router.get("/createCv", checkToken, GraduatedController.createCv);
+router.get("/ViewGraduate", checkToken, GraduatedController.ViewGraduate);
 
 module.exports = router;

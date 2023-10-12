@@ -521,3 +521,15 @@ exports.ViewCompany = (req, res) => {
       res.status(401).json(err);
     });
 };
+
+exports.ViewGraduate = (req, res) => {
+  const Gid = req.params.Gid;
+  Graduated.findById(Gid)
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};

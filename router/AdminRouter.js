@@ -132,5 +132,6 @@ router.patch(
 router.post("/createOnce", AdminController.createOnce);
 router.post("/adminlogin", AdminController.adminlogin);
 router.get("/ViewCompany/:Cid", AdminController.ViewCompany);
+router.get("/ViewGraduate/:Gid", AdminController.ViewGraduate);
 
 module.exports = router;
