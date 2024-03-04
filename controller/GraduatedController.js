@@ -53,7 +53,7 @@ exports.GraduatedLogin = (req, res) => {
       console.log(compare);
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
-          expiresIn: "1h",
+          expiresIn: "1d",
         });
         console.log("the token is");
         console.log(token);

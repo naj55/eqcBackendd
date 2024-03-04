@@ -45,12 +45,31 @@ exports.adminlogin = async (req, res) => {
       console.log(compare);
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
-          expiresIn: "1h",
+          expiresIn: "1d",
         });
         console.log(token);
         console.log("hiiiii");
         res.json({ token: token });
       } ///end if
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.adminForgetPass = async (req, res) => {
+  const emailInput = req.body.email;
+  Admin.findOne({ email: email })
+    .then(async (result) => {
+      if (!result) {
+        return res.send({ Status: "user not existed" });
+      } ///end if
+
+      const token = jwt.sign({ result }, process.env.secret, {
+        expiresIn: "1d",
+      });
+      console.log(token);
+      res.json({ token: token });
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -293,8 +312,6 @@ exports.postAddJob = (req, res) => {
     skills: skillsInput,
     notes: notesInput,
     jobRequirment: jobRequirmentInput,
-    company: companyInput,
-    Hr: HrInput,
   });
   newJob
     .save()
@@ -353,14 +370,14 @@ exports.removeJob = (req, res) => {
 //admin job update job
 exports.editJob = (req, res) => {
   const Jid = req.params.Jid;
-  NameInput = req.body.jobname;
-  sdateInput = req.body.sdate;
-  edateInput = req.body.edate;
-  departmentInput = req.body.department;
-  skillsInput = req.body.skills;
-  notesInput = req.body.notes;
-  jobRequirmentInput = req.body.jobRequirment;
-  companyInput = req.body.company;
+  NameInput = req.body.jobname1;
+  sdateInput = req.body.sdate1;
+  edateInput = req.body.edate1;
+  departmentInput = req.body.department1;
+  skillsInput = req.body.skills1;
+  notesInput = req.body.notes1;
+  jobRequirmentInput = req.body.jobRequirment1;
+  ///companyInput = req.body.company;
   HrInput = req.body.Hr;
 
   Job.findById(Jid)
@@ -372,7 +389,7 @@ exports.editJob = (req, res) => {
       foundedJob.skills = skillsInput;
       foundedJob.notes = notesInput;
       foundedJob.jobRequirment = jobRequirmentInput;
-      foundedJob.company = companyInput;
+      // foundedJob.company = companyInput;
       foundedJob.Hr = HrInput;
 
       foundedJob
@@ -528,6 +545,18 @@ exports.ViewGraduate = (req, res) => {
   Graduated.findById(Gid)
     .then((result) => {
       console.log(result);
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.ViewJob = (req, res) => {
+  const JId = req.params.Jid;
+  Job.findById(JId)
+    .populate("company")
+    .then((result) => {
       res.status(200).json(result);
     })
     .catch((err) => {

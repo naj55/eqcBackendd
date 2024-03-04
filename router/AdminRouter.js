@@ -131,7 +131,9 @@ router.patch(
 //admin creation and login
 router.post("/createOnce", AdminController.createOnce);
 router.post("/adminlogin", AdminController.adminlogin);
+router.post("/adminForgetPass", AdminController.adminForgetPass);
 router.get("/ViewCompany/:Cid", AdminController.ViewCompany);
 router.get("/ViewGraduate/:Gid", AdminController.ViewGraduate);
+router.get("/ViewJob/:Jid", AdminController.ViewJob);
 
 module.exports = router;
