@@ -57,23 +57,73 @@ exports.adminlogin = async (req, res) => {
     });
 };
 
-exports.adminForgetPass = async (req, res) => {
+exports.adminForgetPassLink = async (req, res) => {
   const emailInput = req.body.email;
-  Admin.findOne({ email: email })
+  Admin.findOne({ email: emailInput })
+    .select("+password")
     .then(async (result) => {
       if (!result) {
-        return res.send({ Status: "user not existed" });
+        return res.status(404).json({ Status: "user not existed" });
       } ///end if
-
-      const token = jwt.sign({ result }, process.env.secret, {
-        expiresIn: "1d",
-      });
-      console.log(token);
-      res.json({ token: token });
+      const admin_secret = process.env.secret + result.password;
+      const token = jwt.sign(
+        { email: result.email, id: result._id },
+        admin_secret,
+        {
+          expiresIn: "10m",
+        }
+      );
+      res.json({ token: token, id: result._id });
     })
     .catch((err) => {
       res.status(401).json(err);
     });
+
+  //send email to the user
+};
+
+exports.getAdminResetPass = async (req, res) => {
+  const { id, token } = req.params;
+  const oldUser = await Admin.findOne({ _id: id }).select("+password");
+  if (!oldUser) {
+    return res.json({ status: "User Not Exists!!" });
+  }
+  const adminn_secret = process.env.secret + oldUser.password;
+  try {
+    const verify = jwt.verify(token, adminn_secret);
+    res.status(200).json({ email: verify.email });
+  } catch (error) {
+    res.json("not verified");
+  }
+  console.log(req.params);
+};
+
+exports.postAdminResetPass = async (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+  const oldUser = await Admin.findOne({ _id: id }).select("+password");
+  if (!oldUser) {
+    return res.json({ status: "User Not Exists!!" });
+  }
+  const adminn_secret = process.env.secret + oldUser.password;
+  try {
+    const verify = jwt.verify(token, adminn_secret);
+    const encryptedPassword = await bcrypt.hash(password, salt);
+    await Admin.updateOne(
+      {
+        _id: id,
+      },
+      {
+        $set: {
+          password: encryptedPassword,
+        },
+      }
+    );
+    res.status(200).json({ status: "password update" });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "somthing went wrong" });
+  }
 };
 
 //admin company CRUD controller
