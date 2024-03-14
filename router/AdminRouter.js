@@ -133,7 +133,7 @@ router.post("/createOnce", AdminController.createOnce);
 router.post("/adminlogin", AdminController.adminlogin);
 router.post("/adminForgetPass", AdminController.adminForgetPassLink);
 router.get("/reset-password/:id/:token", AdminController.getAdminResetPass);
-router.get("/reset-password/:id/:token", AdminController.postAdminResetPass);
+router.post("/reset-password/:id/:token", AdminController.postAdminResetPass);
 router.get("/ViewCompany/:Cid", AdminController.ViewCompany);
 router.get("/ViewGraduate/:Gid", AdminController.ViewGraduate);
 router.get("/ViewJob/:Jid", AdminController.ViewJob);

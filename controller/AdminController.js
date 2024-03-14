@@ -100,7 +100,7 @@ exports.getAdminResetPass = async (req, res) => {
 
 exports.postAdminResetPass = async (req, res) => {
   const { id, token } = req.params;
-  const { password } = req.body;
+  const { password } = req.body.Password;
   const oldUser = await Admin.findOne({ _id: id }).select("+password");
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
@@ -108,17 +108,27 @@ exports.postAdminResetPass = async (req, res) => {
   const adminn_secret = process.env.secret + oldUser.password;
   try {
     const verify = jwt.verify(token, adminn_secret);
-    const encryptedPassword = await bcrypt.hash(password, salt);
-    await Admin.updateOne(
-      {
-        _id: id,
-      },
-      {
-        $set: {
-          password: encryptedPassword,
-        },
-      }
-    );
+    console.log("try");
+    const hash = await bcrypt.hash(password, salt);
+    console.log("hash");
+    console.log(hash);
+    Admin.findById(id)
+      .select("+password")
+      .then((foundedAdmin) => {
+        foundedAdmin.password = hash;
+        foundedAdmin
+          .save()
+          .then((result) => {
+            res.status(200).json({ status: "password updated" });
+          })
+          .catch((err) => {
+            res.status(401).json(err);
+          });
+      })
+      .catch((err) => {
+        res.status(401).json(err);
+      });
+
     res.status(200).json({ status: "password update" });
   } catch (error) {
     console.log(error);
