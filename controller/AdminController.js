@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
 
+var nodemailer = require("nodemailer");
+
 ///MODELS
 const Company = require("../model/Company");
 const Hr = require("../model/Hr");
@@ -15,7 +17,7 @@ const Application = require("../model/application");
 //admin create and login
 exports.createOnce = async (req, res) => {
   const name = "EqcAdmin";
-  const password = "AdminSecret";
+  const password = "AdminSecret$8";
   const email = "eqcAdmin@aol.edu.sa";
   const hash = await bcrypt.hash(password, salt);
   const admin = new Admin({
@@ -70,9 +72,34 @@ exports.adminForgetPassLink = async (req, res) => {
         { email: result.email, id: result._id },
         admin_secret,
         {
-          expiresIn: "10m",
+          expiresIn: "20m",
         }
       );
+
+      const link = `http://localhost:5173/reset-password/${result._id}`;
+
+      var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "naldossary58@gmail.com",
+          pass: "pjff ogfg ywwv xofg",
+        },
+      });
+
+      var mailOptions = {
+        from: "naldossary58@gmail.com",
+        to: "najlams58@gmail.com",
+        subject: "Sending Email using Node.js",
+        text: "link",
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
       res.json({ token: token, id: result._id });
     })
     .catch((err) => {
@@ -84,6 +111,7 @@ exports.adminForgetPassLink = async (req, res) => {
 
 exports.getAdminResetPass = async (req, res) => {
   const { id, token } = req.params;
+
   const oldUser = await Admin.findOne({ _id: id }).select("+password");
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
@@ -100,15 +128,22 @@ exports.getAdminResetPass = async (req, res) => {
 
 exports.postAdminResetPass = async (req, res) => {
   const { id, token } = req.params;
-  const { password } = req.body.Password;
+  const password = req.body.password;
+  console.log(password);
   const oldUser = await Admin.findOne({ _id: id }).select("+password");
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
   }
+  console.log("oldUser is");
+  console.log(oldUser);
+  console.log("tttt");
   const adminn_secret = process.env.secret + oldUser.password;
+  console.log("xxxx");
   try {
+    console.log("verify");
     const verify = jwt.verify(token, adminn_secret);
-    console.log("try");
+    console.log("tghgtyh");
+
     const hash = await bcrypt.hash(password, salt);
     console.log("hash");
     console.log(hash);
@@ -129,7 +164,7 @@ exports.postAdminResetPass = async (req, res) => {
         res.status(401).json(err);
       });
 
-    res.status(200).json({ status: "password update" });
+    // res.status(200).json({ status: "password update" });
   } catch (error) {
     console.log(error);
     res.json({ status: "somthing went wrong" });

@@ -149,7 +149,9 @@ exports.Hrlogin = async (req, res) => {
 };
 //view listApplication of graduated
 exports.listApplication = (req, res) => {
-  Application.find({ status: "candidate" })
+  Application.find({ status: "wait" })
+    .populate("Graduated")
+    .populate("Job")
     .then((result) => {
       res.status(200).json(result);
     })
