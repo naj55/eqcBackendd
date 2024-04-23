@@ -658,3 +658,94 @@ exports.ViewJob = (req, res) => {
       res.status(401).json(err);
     });
 };
+
+exports.requestedJob = (req, res) => {
+  Job.find({ status: "wait" })
+    .populate("company")
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.accebtedJob = (req, res) => {
+  console.log("accebtedJob");
+  const JId = req.params.JId;
+  console.log(JId);
+  Job.findById(JId)
+    .then((result) => {
+      result.status = "accepted";
+      result.save().then((r) => {
+        console.log("the result is");
+        console.log(r);
+        res.status(200).json(r);
+      });
+      var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "naldossary58@gmail.com",
+          pass: "pjff ogfg ywwv xofg",
+        },
+      });
+
+      var mailOptions = {
+        from: "naldossary58@gmail.com",
+        to: "najlams58@gmail.com",
+        subject: "Sending Email using Node.js",
+        text: "لقد تم قبول الوظيفة و اضافتها للنظام",
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.rejectedJob = (req, res) => {
+  console.log("rejectedJob");
+  const JId = req.params.JId;
+  console.log(JId);
+  Job.findById(JId)
+    .then((result) => {
+      result.status = "rejected";
+      result.save().then((r) => {
+        console.log("the result is");
+        console.log(r);
+        res.status(200).json(r);
+      });
+      var transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: "naldossary58@gmail.com",
+          pass: "pjff ogfg ywwv xofg",
+        },
+      });
+
+      var mailOptions = {
+        from: "naldossary58@gmail.com",
+        to: "najlams58@gmail.com",
+        subject: "Sending Email using Node.js",
+        text: "نعتذر منك لم يتم قبول الوظيفه",
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};

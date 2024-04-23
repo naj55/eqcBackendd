@@ -128,6 +128,12 @@ router.patch(
   checkAuthrization,
   AdminController.StateRejected
 );
+router.get(
+  "/requestedJob",
+  checkToken,
+  checkAuthrization,
+  AdminController.requestedJob
+);
 //admin creation and login
 router.post("/createOnce", AdminController.createOnce);
 router.post("/adminlogin", AdminController.adminlogin);
@@ -137,5 +143,6 @@ router.post("/reset-password/:id/:token", AdminController.postAdminResetPass);
 router.get("/ViewCompany/:Cid", AdminController.ViewCompany);
 router.get("/ViewGraduate/:Gid", AdminController.ViewGraduate);
 router.get("/ViewJob/:Jid", AdminController.ViewJob);
-
+router.patch("/accebtedJob/:JId", AdminController.accebtedJob);
+router.patch("/rejectedJob/:JId", AdminController.rejectedJob);
 module.exports = router;

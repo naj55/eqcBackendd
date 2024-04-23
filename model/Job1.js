@@ -14,6 +14,7 @@ const JobSchema = new schema(
     skills: { type: String },
     notes: { type: String },
     jobRequirment: { type: String },
+    status: { type: String },
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",

@@ -39,6 +39,7 @@ exports.postAddJob = (req, res) => {
     notes: notesInput,
     description: description,
     jobRequirment: jobRequirmentInput,
+    status: "wait",
     company: c,
     Hr: HrInput,
   });

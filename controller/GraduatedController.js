@@ -68,7 +68,7 @@ exports.GraduatedLogin = (req, res) => {
 exports.listJobs = (req, res) => {
   const today = new Date();
   const availableJobs = [];
-  Job.find()
+  Job.find({ status: "accepted" })
     .populate("company")
     .then((result) => {
       console.log(result);
