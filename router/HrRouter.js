@@ -34,7 +34,7 @@ router.patch(
 router.get("/ViewJob/:id", checkToken, HrController.ViewJob);
 router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
 router.get("/listApplication", checkToken, HrController.listApplication);
-router.patch("/StateRejected/:Gid", checkToken, HrController.StateRejected);
-router.patch("/StateAccept/:Gid", checkToken, HrController.StateAccept);
+router.patch("/StateRejected/:Aid", checkToken, HrController.StateRejected);
+router.patch("/StateAccept/:Aid", checkToken, HrController.StateAccept);
 
 module.exports = router;

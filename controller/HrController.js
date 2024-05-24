@@ -163,8 +163,8 @@ exports.listApplication = (req, res) => {
 
 //change state of graduated to candidate
 exports.StateRejected = (req, res) => {
-  const Gid = req.params.Gid;
-  Application.findOne({ Graduated: Gid })
+  const Aid = req.params.Aid;
+  Application.findOne({ _id: Aid })
     .then((foundedApp) => {
       console.log(foundedApp);
       foundedApp.status = "rejected";
@@ -181,8 +181,8 @@ exports.StateRejected = (req, res) => {
 
 //change state of graduated to candidate
 exports.StateAccept = (req, res) => {
-  const Gid = req.params.Gid;
-  Application.findOne({ Graduated: Gid })
+  const Aid = req.params.Aid;
+  Application.findOne({ _id: Aid })
     .then((foundedApp) => {
       console.log(foundedApp);
       foundedApp.status = "accept";
