@@ -28,6 +28,8 @@ exports.postAddJob = (req, res) => {
   description = req.body.description;
   jobRequirmentInput = req.body.jobRequirment;
   c = res.locals.decoder.result.company;
+  console.log("c");
+  console.log(c);
   HrInput = HId;
 
   const newJob = new Job({

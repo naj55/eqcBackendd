@@ -215,8 +215,23 @@ exports.listCompanies = (req, res) => {
 //admin company delete Company
 exports.removeCompany = (req, res) => {
   const Cid = req.params.Cid;
+
   Company.findByIdAndDelete(Cid)
     .then(() => {
+      Hr.deleteMany({ company: Cid })
+        .then((r) => {
+          console.log("Hr is deleted");
+          Job.deleteMany({ company: Cid })
+            .then(() => {
+              console.log("job is deleted");
+            })
+            .catch((err) => {
+              res.status(401).json(err);
+            });
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
       res.status(200).json("company deleted");
     })
     .catch((err) => {
@@ -661,7 +676,6 @@ exports.ViewJob = (req, res) => {
 
 exports.requestedJob = (req, res) => {
   Job.find({ status: "wait" })
-    .populate("company")
     .then((result) => {
       res.status(200).json(result);
     })
@@ -744,6 +758,18 @@ exports.rejectedJob = (req, res) => {
           console.log("Email sent: " + info.response);
         }
       });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+//admin clear job
+exports.clearJob = (req, res) => {
+  console.log("jj");
+  Job.findOneAndDelete({ company: null })
+    .then(() => {
+      res.status(200).json("job has been deleted");
     })
     .catch((err) => {
       res.status(401).json(err);

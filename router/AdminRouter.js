@@ -145,4 +145,6 @@ router.get("/ViewGraduate/:Gid", AdminController.ViewGraduate);
 router.get("/ViewJob/:Jid", AdminController.ViewJob);
 router.patch("/accebtedJob/:JId", AdminController.accebtedJob);
 router.patch("/rejectedJob/:JId", AdminController.rejectedJob);
+
+router.delete("/clearJob", AdminController.clearJob);
 module.exports = router;
