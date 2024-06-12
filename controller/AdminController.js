@@ -212,7 +212,7 @@ exports.listCompanies = (req, res) => {
     });
 };
 
-//admin company delete Company
+//admin company delete Company cascade
 exports.removeCompany = (req, res) => {
   const Cid = req.params.Cid;
 
@@ -350,6 +350,13 @@ exports.removeHr = (req, res) => {
   const Hid = req.params.Hid;
   Hr.findByIdAndDelete(Hid)
     .then(() => {
+      Job.deleteMany({ Hr: Hid })
+        .then(() => {
+          console.log("job is deleted");
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
       res.status(200).json("Hr has been deleted");
     })
     .catch((err) => {
