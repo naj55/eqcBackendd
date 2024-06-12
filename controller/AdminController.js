@@ -683,6 +683,7 @@ exports.ViewJob = (req, res) => {
 
 exports.requestedJob = (req, res) => {
   Job.find({ status: "wait" })
+    .populate("company")
     .then((result) => {
       res.status(200).json(result);
     })
