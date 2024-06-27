@@ -84,7 +84,13 @@ exports.removeJob = (req, res) => {
   const Jid = req.params.Jid;
   Job.findByIdAndDelete(Jid)
     .then(() => {
-      res.status(200).json("job has been deleted");
+      Application.deleteMany({ Job: Jid })
+        .then(() => {
+          console.log("job is deleted");
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
     })
     .catch((err) => {
       res.status(401).json(err);
