@@ -5,7 +5,7 @@ require("dotenv").config();
 const checkAuthrization = (req, res, next) => {
   let decoder = res.locals.decoder;
   console.log(decoder);
-  const email = "eqcAdmin@aol.edu.sa";
+  const email = "aoleqc@gmail.com";
   Admin.findOne({ email: email })
     .then((foundedUser) => {
       console.log(foundedUser);

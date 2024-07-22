@@ -174,13 +174,43 @@ exports.StateRejected = (req, res) => {
   const Aid = req.params.Aid;
   Application.findOne({ _id: Aid })
     .then((foundedApp) => {
-      console.log(foundedApp);
+      GID = foundedApp.Graduated;
       foundedApp.status = "rejected";
       foundedApp.save().then((result) => {
         console.log("the result is");
         console.log(result);
         res.status(200).json(result);
       });
+      Graduated.findById(GID)
+        .then((result) => {
+          const Gemail = result.email;
+          var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "aoleqc@gmail.com",
+              pass: "exse plzx hdjy tsrj",
+            },
+          });
+
+          var mailOptions = {
+            from: "aoleqc@gmail.com",
+            to: Gemail,
+            subject: "Sending Email using Node.js",
+            text: "نعتذر منك لم يتم قبول طلبك للتقديم على الوظيفه",
+          };
+
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
+        })
+        .catch((error) => {
+          res.status(401).json(err);
+        });
+      console.log(foundedApp);
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -192,12 +222,41 @@ exports.StateAccept = (req, res) => {
   const Aid = req.params.Aid;
   Application.findOne({ _id: Aid })
     .then((foundedApp) => {
-      console.log(foundedApp);
+      GID = foundedApp.Graduated;
       foundedApp.status = "accept";
       foundedApp.save().then((result) => {
         console.log("the result is");
         console.log(result);
         res.status(200).json(result);
+        Graduated.findById(GID)
+          .then((result) => {
+            const Gemail = result.email;
+            var transporter = nodemailer.createTransport({
+              service: "gmail",
+              auth: {
+                user: "aoleqc@gmail.com",
+                pass: "exse plzx hdjy tsrj",
+              },
+            });
+
+            var mailOptions = {
+              from: "aoleqc@gmail.com",
+              to: Gemail,
+              subject: "Sending Email using Node.js",
+              text: "لقد تم قبول طلبك للتقديم على الوظيفه",
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+              if (error) {
+                console.log(error);
+              } else {
+                console.log("Email sent: " + info.response);
+              }
+            });
+          })
+          .catch((error) => {
+            res.status(401).json(err);
+          });
       });
     })
     .catch((err) => {

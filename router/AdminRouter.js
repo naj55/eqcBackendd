@@ -17,8 +17,7 @@ const checkAuthrization = require("../middleware/checkAuthrization");
 //router.post("/addtheCompany", AdminController.postAddCompany);
 router.post(
   "/addCompany",
-  checkToken,
-  checkAuthrization,
+
   AdminController.postAddCompany
 );
 router.get(
@@ -136,6 +135,7 @@ router.get(
 );
 //admin creation and login
 router.post("/createOnce", AdminController.createOnce);
+
 router.post("/adminlogin", AdminController.adminlogin);
 router.post("/adminForgetPass", AdminController.adminForgetPassLink);
 router.get("/reset-password/:id/:token", AdminController.getAdminResetPass);

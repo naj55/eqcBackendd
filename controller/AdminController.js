@@ -18,7 +18,7 @@ const Application = require("../model/application");
 exports.createOnce = async (req, res) => {
   const name = "EqcAdmin";
   const password = "AdminSecret$8";
-  const email = "eqcAdmin@aol.edu.sa";
+  const email = "aoleqc@gmail.com";
   const hash = await bcrypt.hash(password, salt);
   const admin = new Admin({
     name: name,
@@ -81,13 +81,13 @@ exports.adminForgetPassLink = async (req, res) => {
       var transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: "naldossary58@gmail.com",
+          user: "eqcAdmin@aol.edu.sa",
           pass: "pjff ogfg ywwv xofg",
         },
       });
 
       var mailOptions = {
-        from: "naldossary58@gmail.com",
+        from: "eqcAdmin@aol.edu.sa",
         to: "najlams58@gmail.com",
         subject: "Sending Email using Node.js",
         text: "link",
@@ -695,37 +695,48 @@ exports.requestedJob = (req, res) => {
 exports.accebtedJob = (req, res) => {
   console.log("accebtedJob");
   const JId = req.params.JId;
-  console.log(JId);
   Job.findById(JId)
     .then((result) => {
-      result.status = "accepted";
-      result.save().then((r) => {
-        console.log("the result is");
-        console.log(r);
-        res.status(200).json(r);
-      });
-      var transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: "naldossary58@gmail.com",
-          pass: "pjff ogfg ywwv xofg",
-        },
-      });
+      const hrId = result.Hr;
+      Hr.findById(hrId)
+        .then((r) => {
+          const HrEmail = r.email;
+          console.log("the hr issss");
+          console.log(hrId);
+          console.log("the hr email ");
+          console.log(HrEmail);
+          result.status = "accepted";
+          result.save().then((r) => {
+            console.log("the result is");
+            console.log(r);
+            res.status(200).json(r);
+          });
+          var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "aoleqc@gmail.com",
+              pass: "exse plzx hdjy tsrj",
+            },
+          });
 
-      var mailOptions = {
-        from: "naldossary58@gmail.com",
-        to: "najlams58@gmail.com",
-        subject: "Sending Email using Node.js",
-        text: "لقد تم قبول الوظيفة و اضافتها للنظام",
-      };
+          var mailOptions = {
+            from: "aoleqc@gmail.com",
+            to: HrEmail,
+            subject: "Sending Email using Node.js",
+            text: "لقد تم قبول الوظيفة و اضافتها للنظام",
+          };
 
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("Email sent: " + info.response);
-        }
-      });
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
+        })
+        .catch((error) => {
+          res.status(401).json(err);
+        });
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -735,37 +746,42 @@ exports.accebtedJob = (req, res) => {
 exports.rejectedJob = (req, res) => {
   console.log("rejectedJob");
   const JId = req.params.JId;
-  console.log(JId);
   Job.findById(JId)
     .then((result) => {
-      result.status = "rejected";
-      result.save().then((r) => {
-        console.log("the result is");
-        console.log(r);
-        res.status(200).json(r);
-      });
-      var transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: "naldossary58@gmail.com",
-          pass: "pjff ogfg ywwv xofg",
-        },
-      });
-
-      var mailOptions = {
-        from: "naldossary58@gmail.com",
-        to: "najlams58@gmail.com",
-        subject: "Sending Email using Node.js",
-        text: "نعتذر منك لم يتم قبول الوظيفه",
-      };
-
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log("Email sent: " + info.response);
-        }
-      });
+      const hrId = result.Hr;
+      Hr.findById(hrId)
+        .then((r) => {
+          const HrEmail = r.email;
+          result.status = "rejected";
+          result.save().then((r) => {
+            console.log("the result is");
+            console.log(r);
+            res.status(200).json(r);
+          });
+          var transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+              user: "aoleqc@gmail.com",
+              pass: "exse plzx hdjy tsrj",
+            },
+          });
+          var mailOptions = {
+            from: "aoleqc@gmail.com",
+            to: HrEmail,
+            subject: "Sending Email using Node.js",
+            text: "نعتذر منك لم يتم قبول الوظيفه",
+          };
+          transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
+        })
+        .catch((error) => {
+          res.status(401).json(err);
+        });
     })
     .catch((err) => {
       res.status(401).json(err);
