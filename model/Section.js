@@ -45,7 +45,7 @@ const SectionSchema = new schema(
       type: String,
     },
     graduated: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "Graduated",
     },
   },

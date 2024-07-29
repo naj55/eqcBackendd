@@ -90,7 +90,8 @@ exports.listJobs = (req, res) => {
 //applyJob
 exports.applyJob = (req, res) => {
   const Jid = req.params.Jid;
-  const GId = res.locals.decoder.result._id;
+  const GId = res.locals.decoder.result.homeAccountId;
+  console.log("GId");
   console.log(GId);
   console.log(Jid);
   const newApplication = new Application({
@@ -128,7 +129,11 @@ exports.applyedJob = async (req, res) => {
 };
 //create section in cv
 exports.educationSection = (req, res) => {
-  const GId = res.locals.decoder.result._id;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const Gid = decoded.appid;
+  console.log("Gid");
+  console.log(Gid);
   const qualification = req.body.qualification;
   const from = req.body.from;
   const gpa = req.body.gpa;
@@ -142,11 +147,12 @@ exports.educationSection = (req, res) => {
     gpa: gpa,
     sartDate: sartDate,
     endDate: endDate,
-    graduated: GId,
+    graduated: Gid,
   });
   education
     .save()
     .then((result) => {
+      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -154,7 +160,9 @@ exports.educationSection = (req, res) => {
     });
 };
 exports.experienceSection = (req, res) => {
-  const GId = res.locals.decoder.result._id;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
   const preJob = req.body.preJob;
   const from = req.body.from;
   const sartDate = req.body.sartDate;
@@ -179,7 +187,10 @@ exports.experienceSection = (req, res) => {
 };
 
 exports.courseSection = (req, res) => {
-  const GId = res.locals.decoder.result._id;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+
   const course = req.body.course;
   const from = req.body.from;
   const sartDate = req.body.sartDate;
@@ -204,7 +215,10 @@ exports.courseSection = (req, res) => {
 };
 
 exports.skillsSection = (req, res) => {
-  const GId = res.locals.decoder.result._id;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+
   const language = req.body.language;
   const level = req.body.level;
   const skills = req.body.skills;
@@ -226,9 +240,13 @@ exports.skillsSection = (req, res) => {
     });
 };
 exports.volunteeringSection = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+
   const from = req.body.from;
   const hours = req.body.hours;
-  const GId = res.locals.decoder.result._id;
+
   const volunteering = new Section({
     title: "volunteering",
     from: from,
@@ -272,9 +290,11 @@ exports.ViewJob = (req, res) => {
 };
 
 exports.ViewGraduate = (req, res) => {
-  const Gid = res.locals.decoder.result._id;
-  console.log(Gid);
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const Gid = decoded.appid;
   console.log("the graduated is ");
+  console.log(decoded.appid);
   Graduated.findById(Gid)
     .then((result) => {
       console.log(result);
@@ -283,4 +303,15 @@ exports.ViewGraduate = (req, res) => {
     .catch((err) => {
       res.status(401).json(err);
     });
+};
+
+exports.authenticateToken = (req, res, next) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  console.log("token");
+  console.log(token);
+  if (!token) return res.sendStatus(401);
+
+  console.log("the token is");
+  console.log(token);
+  res.json({ token: token });
 };

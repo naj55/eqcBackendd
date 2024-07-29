@@ -18,21 +18,21 @@ router.post("/GraduatedSignUp", GraduatedController.GraduatedSignUp);
 //Graduated Login
 router.post("/GraduatedLogin", GraduatedController.GraduatedLogin);
 // //Hr Job CRUD router
-router.get("/listJobs", checkToken, GraduatedController.listJobs);
-router.get("/applyJob/:Jid", checkToken, GraduatedController.applyJob);
-router.get("/applyedJob", checkToken, GraduatedController.applyedJob);
+router.get("/listJobs", GraduatedController.listJobs);
+router.get("/applyJob/:Jid", GraduatedController.applyJob);
+router.get("/applyedJob", GraduatedController.applyedJob);
 //create cv
-router.post("/education", checkToken, GraduatedController.educationSection);
-router.post("/experience", checkToken, GraduatedController.experienceSection);
-router.post("/course", checkToken, GraduatedController.courseSection);
-router.post("/skills", checkToken, GraduatedController.skillsSection);
+router.post("/education", GraduatedController.educationSection);
+router.post("/experience", GraduatedController.experienceSection);
+router.post("/course", GraduatedController.courseSection);
+router.post("/skills", GraduatedController.skillsSection);
 router.post(
   "/volunteering",
-  checkToken,
+
   GraduatedController.volunteeringSection
 );
-router.get("/ViewJob/:Jid", checkToken, GraduatedController.ViewJob);
-router.get("/createCv", checkToken, GraduatedController.createCv);
-router.get("/ViewGraduate", checkToken, GraduatedController.ViewGraduate);
-
+router.get("/ViewJob/:Jid", GraduatedController.ViewJob);
+router.get("/createCv", GraduatedController.createCv);
+router.get("/ViewGraduate", GraduatedController.ViewGraduate);
+router.get("/authenticateToken", GraduatedController.authenticateToken);
 module.exports = router;

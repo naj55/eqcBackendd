@@ -1,9 +1,15 @@
 const mongoose = require("mongoose");
 const schema = mongoose.Schema;
 const uniqueValidatore = require("mongoose-unique-validator");
+const { v4: uuidv4 } = require("uuid");
 
 const GraduatedSchema = new schema(
   {
+    graduated: {
+      type: String,
+      default: uuidv4, // تعيين UUID افتراضي
+      required: true,
+    },
     name: { type: String, require: true },
     email: { type: String, unique: true },
     phone: { type: String, required: true, unique: true },
