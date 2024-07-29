@@ -90,7 +90,9 @@ exports.listJobs = (req, res) => {
 //applyJob
 exports.applyJob = (req, res) => {
   const Jid = req.params.Jid;
-  const GId = res.locals.decoder.result.homeAccountId;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
   console.log("GId");
   console.log(GId);
   console.log(Jid);
@@ -110,7 +112,9 @@ exports.applyJob = (req, res) => {
 };
 //list for all job that has been applyed
 exports.applyedJob = async (req, res) => {
-  const GId = res.locals.decoder.result._id;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
   Application.find({ Graduated: GId })
     .populate({
       path: "Job",
@@ -131,9 +135,9 @@ exports.applyedJob = async (req, res) => {
 exports.educationSection = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
-  const Gid = decoded.appid;
+  const GId = decoded.appid;
   console.log("Gid");
-  console.log(Gid);
+  console.log(GId);
   const qualification = req.body.qualification;
   const from = req.body.from;
   const gpa = req.body.gpa;
@@ -147,7 +151,7 @@ exports.educationSection = (req, res) => {
     gpa: gpa,
     sartDate: sartDate,
     endDate: endDate,
-    graduated: Gid,
+    graduated: GId,
   });
   education
     .save()
@@ -266,7 +270,10 @@ exports.volunteeringSection = (req, res) => {
 exports.profile = async (req, res) => {};
 //Graduated cv
 exports.createCv = (req, res) => {
-  const GId = res.locals.decoder.result._id;
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+
   Section.find({ graduated: GId })
     .then((result) => {
       res.status(200).json(result);
