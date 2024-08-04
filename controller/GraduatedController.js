@@ -13,15 +13,13 @@ const Application = require("../model/application");
 const Section = require("../model/Section");
 
 //GraduatedSignUp
-exports.GraduatedSignUp = async (req, res) => {
+exports.GraduatedInfo = async (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
   const phone = req.body.phone;
   const NId = req.body.NId;
-  const password = req.body.password;
   const major = req.body.major;
   const address = req.body.address;
-  const hash = await bcrypt.hash(password, salt);
 
   const NewGraduated = new Graduated({
     name: name,
@@ -299,10 +297,10 @@ exports.ViewJob = (req, res) => {
 exports.ViewGraduate = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
-  const Gid = decoded.appid;
+  const Gemail = decoded.unique_name;
   console.log("the graduated is ");
-  console.log(decoded.appid);
-  Graduated.findById(Gid)
+  console.log(decoded.unique_name);
+  Graduated.findOne({ email: Gemail })
     .then((result) => {
       console.log(result);
       res.status(200).json(result);

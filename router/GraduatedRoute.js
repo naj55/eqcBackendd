@@ -14,7 +14,7 @@ const GraduatedController = require("../controller/GraduatedController");
 const checkToken = require("../middleware/checkToken");
 
 //Graduated SignUp
-router.post("/GraduatedSignUp", GraduatedController.GraduatedSignUp);
+router.post("/GraduatedInfo", GraduatedController.GraduatedInfo);
 //Graduated Login
 router.post("/GraduatedLogin", GraduatedController.GraduatedLogin);
 // //Hr Job CRUD router
