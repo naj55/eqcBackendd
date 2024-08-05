@@ -138,6 +138,7 @@ exports.educationSection = (req, res) => {
   console.log(GId);
   const qualification = req.body.qualification;
   const from = req.body.from;
+  const major = req.body.major;
   const gpa = req.body.gpa;
   const sartDate = req.body.sartDate;
   const endDate = req.body.endDate;
@@ -145,6 +146,7 @@ exports.educationSection = (req, res) => {
   const education = new Section({
     title: "Education",
     qualification: qualification,
+    major: major,
     from: from,
     gpa: gpa,
     sartDate: sartDate,
@@ -165,9 +167,9 @@ exports.experienceSection = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
-  const preJob = req.body.preJob;
-  const from = req.body.from;
-  const sartDate = req.body.sartDate;
+  const preJob = req.body.jobTitle;
+  const from = req.body.employer;
+  const sartDate = req.body.startDate;
   const endDate = req.body.endDate;
 
   const experience = new Section({
@@ -194,7 +196,7 @@ exports.courseSection = (req, res) => {
   const GId = decoded.appid;
 
   const course = req.body.course;
-  const from = req.body.from;
+  const from = req.body.provider;
   const sartDate = req.body.sartDate;
   const endDate = req.body.endDate;
 
@@ -223,7 +225,7 @@ exports.skillsSection = (req, res) => {
 
   const language = req.body.language;
   const level = req.body.level;
-  const skills = req.body.skills;
+  const skills = req.body.description;
 
   const newSkills = new Section({
     title: "Skills",
@@ -246,7 +248,7 @@ exports.volunteeringSection = (req, res) => {
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
 
-  const from = req.body.from;
+  const from = req.body.organization;
   const hours = req.body.hours;
 
   const volunteering = new Section({
@@ -270,8 +272,10 @@ exports.profile = async (req, res) => {};
 exports.createCv = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
+  console.log("this is befor create cv");
+  console.log(decoded);
   const GId = decoded.appid;
-
+  console.log(GId);
   Section.find({ graduated: GId })
     .then((result) => {
       res.status(200).json(result);

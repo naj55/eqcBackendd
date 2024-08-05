@@ -11,6 +11,9 @@ const SectionSchema = new schema(
     qualification: {
       type: String,
     },
+    major: {
+      type: String,
+    },
     preJob: {
       type: String,
     },
