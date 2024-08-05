@@ -14,11 +14,18 @@ const Section = require("../model/Section");
 
 //GraduatedSignUp
 exports.GraduatedInfo = async (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  console.log("this is the GraduatedInfo  request decoded");
+  console.log(decoded);
+  const GId = decoded.appid;
+  console.log("this is the GId  request decoded");
+  console.log(GId);
+
   const name = req.body.name;
   const email = req.body.email;
   const phone = req.body.phone;
   const NId = req.body.NId;
-  const major = req.body.major;
   const address = req.body.address;
 
   const NewGraduated = new Graduated({
@@ -26,9 +33,8 @@ exports.GraduatedInfo = async (req, res) => {
     email: email,
     phone: phone,
     NId: NId,
-    password: hash,
-    major: major,
     address: address,
+    graduated: GId,
   });
   NewGraduated.save()
     .then((result) => {
@@ -90,8 +96,9 @@ exports.applyJob = (req, res) => {
   const Jid = req.params.Jid;
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
+  console.log("this is the apply job request decoded");
+  console.log(decoded);
   const GId = decoded.appid;
-  console.log("GId");
   console.log(GId);
   console.log(Jid);
   const newApplication = new Application({
@@ -163,6 +170,7 @@ exports.educationSection = (req, res) => {
       res.status(401).json(err);
     });
 };
+
 exports.experienceSection = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);

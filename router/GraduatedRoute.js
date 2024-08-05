@@ -42,4 +42,5 @@ router.get("/getSkills", GraduatedController.getSkills);
 router.get("/getVolunteering", GraduatedController.getVolunteering);
 
 router.get("/authenticateToken", GraduatedController.authenticateToken);
+
 module.exports = router;
