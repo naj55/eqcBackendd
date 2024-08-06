@@ -16,11 +16,7 @@ const Section = require("../model/Section");
 exports.GraduatedInfo = async (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
-  console.log("this is the GraduatedInfo  request decoded");
-  console.log(decoded);
   const GId = decoded.appid;
-  console.log("this is the GId  request decoded");
-  console.log(GId);
 
   const name = req.body.name;
   const email = req.body.email;
@@ -54,13 +50,10 @@ exports.GraduatedLogin = (req, res) => {
     .then(async (result) => {
       const hashedPass = result.password;
       const compare = await bcrypt.compare(password, hashedPass);
-      console.log(compare);
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
           expiresIn: "1d",
         });
-        console.log("the token is");
-        console.log(token);
         res.json({ token: token });
       } ///end if
     })
@@ -75,14 +68,11 @@ exports.listJobs = (req, res) => {
   Job.find({ status: "accepted" })
     .populate("company")
     .then((result) => {
-      console.log(result);
       for (r of result) {
         if (today <= r.edate) {
           availableJobs.push(r);
         }
       }
-      console.log("e date is");
-      console.log(availableJobs);
       res.status(200).json(availableJobs);
       return;
     })
@@ -96,37 +86,19 @@ exports.applyJob = (req, res) => {
   const Jid = req.params.Jid;
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
-  console.log("this is the apply job request decoded");
-  console.log(decoded);
   const GId = decoded.appid;
-  console.log(GId);
-  console.log(Jid);
-  Graduated.find({ graduated: GId })
+  const newApplication = new Application({
+    Graduated: GId,
+    Job: Jid,
+    status: "wait",
+  });
+  newApplication
+    .save()
     .then((result) => {
-      console.log("the result for view student in application");
-      console.log(result);
-
-      const gid = result[0]._id;
-      console.log("result._id");
-      console.log(gid);
-
-      const newApplication = new Application({
-        GraduatedId: gid,
-        Graduated: GId,
-        Job: Jid,
-        status: "wait",
-      });
-      newApplication
-        .save()
-        .then((result) => {
-          res.status(200).json(result);
-        })
-        .catch((err) => {
-          res.status(401).json(err);
-        });
+      res.status(200).json(result);
     })
-    .catch((error) => {
-      res.status(401).json(error);
+    .catch((err) => {
+      res.status(401).json(err);
     });
 };
 //list for all job that has been applyed
@@ -155,8 +127,6 @@ exports.educationSection = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
-  console.log("Gid");
-  console.log(GId);
   const qualification = req.body.qualification;
   const from = req.body.from;
   const major = req.body.major;
@@ -177,7 +147,6 @@ exports.educationSection = (req, res) => {
   education
     .save()
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -294,10 +263,7 @@ exports.profile = async (req, res) => {};
 exports.createCv = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
-  console.log("this is befor create cv");
-  console.log(decoded);
   const GId = decoded.appid;
-  console.log(GId);
   Section.find({ graduated: GId })
     .then((result) => {
       res.status(200).json(result);
@@ -324,11 +290,8 @@ exports.ViewGraduate = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const Gemail = decoded.unique_name;
-  console.log("the graduated is ");
-  console.log(decoded.unique_name);
   Graduated.findOne({ email: Gemail })
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -415,11 +378,6 @@ exports.getApplication = (req, res) => {
 
 exports.authenticateToken = (req, res, next) => {
   const token = req.headers["authorization"]?.split(" ")[1];
-  console.log("token");
-  console.log(token);
   if (!token) return res.sendStatus(401);
-
-  console.log("the token is");
-  console.log(token);
   res.json({ token: token });
 };
