@@ -44,13 +44,10 @@ exports.adminlogin = async (req, res) => {
     .then(async (result) => {
       const hashedPass = result.password;
       const compare = await bcrypt.compare(password, hashedPass);
-      console.log(compare);
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
           expiresIn: "1d",
         });
-        console.log(token);
-        console.log("hiiiii");
         res.json({ token: token });
       } ///end if
     })
@@ -123,30 +120,19 @@ exports.getAdminResetPass = async (req, res) => {
   } catch (error) {
     res.json("not verified");
   }
-  console.log(req.params);
 };
 
 exports.postAdminResetPass = async (req, res) => {
   const { id, token } = req.params;
   const password = req.body.password;
-  console.log(password);
   const oldUser = await Admin.findOne({ _id: id }).select("+password");
   if (!oldUser) {
     return res.json({ status: "User Not Exists!!" });
   }
-  console.log("oldUser is");
-  console.log(oldUser);
-  console.log("tttt");
   const adminn_secret = process.env.secret + oldUser.password;
-  console.log("xxxx");
   try {
-    console.log("verify");
     const verify = jwt.verify(token, adminn_secret);
-    console.log("tghgtyh");
-
     const hash = await bcrypt.hash(password, salt);
-    console.log("hash");
-    console.log(hash);
     Admin.findById(id)
       .select("+password")
       .then((foundedAdmin) => {
@@ -166,7 +152,6 @@ exports.postAdminResetPass = async (req, res) => {
 
     // res.status(200).json({ status: "password update" });
   } catch (error) {
-    console.log(error);
     res.json({ status: "somthing went wrong" });
   }
 };
@@ -220,7 +205,6 @@ exports.removeCompany = (req, res) => {
     .then(() => {
       Hr.deleteMany({ company: Cid })
         .then((r) => {
-          console.log("Hr is deleted");
           Job.deleteMany({ company: Cid })
             .then(() => {
               console.log("job is deleted");
@@ -462,8 +446,6 @@ exports.availablelistJobs = (req, res) => {
           availableJobs.push(r);
         }
       }
-      console.log("e date is");
-      console.log(availableJobs);
       res.status(200).json(availableJobs);
       return;
     })
@@ -611,15 +593,10 @@ exports.editGraduated = (req, res) => {
 //change state of graduated to candidate
 exports.StateCandidate = (req, res) => {
   const Gid = req.params.Gid;
-  console.log("Gidddddddd");
-  console.log(Gid);
   Application.findOne({ Graduated: Gid })
     .then((foundedApp) => {
-      console.log(foundedApp);
       foundedApp.status = "candidate";
       foundedApp.save().then((result) => {
-        console.log("the result is");
-        console.log(result);
         res.status(200).json(result);
       });
     })
@@ -633,11 +610,8 @@ exports.StateRejected = (req, res) => {
   const Gid = req.params.Gid;
   Application.findOne({ Graduated: Gid })
     .then((foundedApp) => {
-      console.log(foundedApp);
       foundedApp.status = "rejected";
       foundedApp.save().then((result) => {
-        console.log("the result is");
-        console.log(result);
         res.status(200).json(result);
       });
     })
@@ -661,7 +635,6 @@ exports.ViewGraduate = (req, res) => {
   const Gid = req.params.Gid;
   Graduated.findById(Gid)
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -693,7 +666,6 @@ exports.requestedJob = (req, res) => {
 };
 
 exports.accebtedJob = (req, res) => {
-  console.log("accebtedJob");
   const JId = req.params.JId;
   Job.findById(JId)
     .then((result) => {
@@ -701,14 +673,8 @@ exports.accebtedJob = (req, res) => {
       Hr.findById(hrId)
         .then((r) => {
           const HrEmail = r.email;
-          console.log("the hr issss");
-          console.log(hrId);
-          console.log("the hr email ");
-          console.log(HrEmail);
           result.status = "accepted";
           result.save().then((r) => {
-            console.log("the result is");
-            console.log(r);
             res.status(200).json(r);
           });
           var transporter = nodemailer.createTransport({
@@ -744,7 +710,6 @@ exports.accebtedJob = (req, res) => {
 };
 
 exports.rejectedJob = (req, res) => {
-  console.log("rejectedJob");
   const JId = req.params.JId;
   Job.findById(JId)
     .then((result) => {
@@ -754,8 +719,6 @@ exports.rejectedJob = (req, res) => {
           const HrEmail = r.email;
           result.status = "rejected";
           result.save().then((r) => {
-            console.log("the result is");
-            console.log(r);
             res.status(200).json(r);
           });
           var transporter = nodemailer.createTransport({
@@ -790,7 +753,6 @@ exports.rejectedJob = (req, res) => {
 
 //admin clear job
 exports.clearJob = (req, res) => {
-  console.log("jj");
   Job.findOneAndDelete({ company: null })
     .then(() => {
       res.status(200).json("job has been deleted");

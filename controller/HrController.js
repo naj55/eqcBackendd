@@ -17,8 +17,6 @@ exports.postAddJob = (req, res) => {
   const D = res.locals.decoder;
   const HId = res.locals.decoder.result._id;
 
-  console.log(res.locals.decoder);
-
   NameInput = req.body.jobname;
   sdateInput = req.body.sdate;
   edateInput = req.body.edate;
@@ -28,8 +26,6 @@ exports.postAddJob = (req, res) => {
   description = req.body.description;
   jobRequirmentInput = req.body.jobRequirment;
   c = res.locals.decoder.result.company;
-  console.log("c");
-  console.log(c);
   HrInput = HId;
 
   const newJob = new Job({
@@ -144,7 +140,6 @@ exports.Hrlogin = async (req, res) => {
     .then(async (result) => {
       const hashedPass = result.password;
       const compare = await bcrypt.compare(password, hashedPass);
-      console.log(compare);
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
           expiresIn: "1d",
@@ -177,8 +172,6 @@ exports.StateRejected = (req, res) => {
       GID = foundedApp.Graduated;
       foundedApp.status = "rejected";
       foundedApp.save().then((result) => {
-        console.log("the result is");
-        console.log(result);
         res.status(200).json(result);
       });
       Graduated.findById(GID)
@@ -210,7 +203,6 @@ exports.StateRejected = (req, res) => {
         .catch((error) => {
           res.status(401).json(err);
         });
-      console.log(foundedApp);
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -225,8 +217,6 @@ exports.StateAccept = (req, res) => {
       GID = foundedApp.Graduated;
       foundedApp.status = "accept";
       foundedApp.save().then((result) => {
-        console.log("the result is");
-        console.log(result);
         res.status(200).json(result);
         Graduated.findById(GID)
           .then((result) => {
@@ -267,10 +257,8 @@ exports.StateAccept = (req, res) => {
 //view graduated cv
 exports.ViewCv = (req, res) => {
   const GId = req.params.Gid;
-  console.log(GId);
   Section.find({ graduated: GId })
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
