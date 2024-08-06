@@ -101,18 +101,32 @@ exports.applyJob = (req, res) => {
   const GId = decoded.appid;
   console.log(GId);
   console.log(Jid);
-  const newApplication = new Application({
-    Graduated: GId,
-    Job: Jid,
-    status: "wait",
-  });
-  newApplication
-    .save()
+  Graduated.find({ graduated: GId })
     .then((result) => {
-      res.status(200).json(result);
+      console.log("the result for view student in application");
+      console.log(result);
+
+      const gid = result[0]._id;
+      console.log("result._id");
+      console.log(gid);
+
+      const newApplication = new Application({
+        GraduatedId: gid,
+        Graduated: GId,
+        Job: Jid,
+        status: "wait",
+      });
+      newApplication
+        .save()
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
     })
-    .catch((err) => {
-      res.status(401).json(err);
+    .catch((error) => {
+      res.status(401).json(error);
     });
 };
 //list for all job that has been applyed

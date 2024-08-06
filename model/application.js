@@ -4,10 +4,10 @@ const uniqueValidatore = require("mongoose-unique-validator");
 
 const ApplicationSchema = new schema(
   {
-    // GraduatedId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Graduated",
-    // },
+    GraduatedId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Graduated",
+    },
     Graduated: {
       type: mongoose.Schema.Types.String,
       ref: "Graduated",
