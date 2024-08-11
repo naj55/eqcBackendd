@@ -33,6 +33,7 @@ router.post(
 );
 router.get("/ViewJob/:Jid", GraduatedController.ViewJob);
 router.get("/createCv", GraduatedController.createCv);
+router.get("/createCv/:id", GraduatedController.createCvById);
 router.get("/ViewGraduate", GraduatedController.ViewGraduate);
 router.get("/getEducation", GraduatedController.getEducation);
 router.get("/getExperience", GraduatedController.getExperience);

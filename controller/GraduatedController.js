@@ -273,6 +273,25 @@ exports.createCv = (req, res) => {
     });
 };
 
+exports.createCvById = (req, res) => {
+  const { id } = req.params;
+  // المشكلة : لايتم حفظ الاي دي الخاص ب الطالب في اقسام السي في الخاص به يتم حفظ الاي دي الخاص ب مايكروسوفت بدلا من ذالك
+  Section.find()
+    .then((result) => {
+      result.map((item) => {
+        if (item.graduated == id) {
+          console.log(item);
+          res.status(200).json(item);
+        } else {
+          console.log("not found", item.graduated);
+        }
+      });
+    })
+    .catch((err) => {
+      res.status(403).json(err);
+    });
+};
+
 //hr job List job
 exports.ViewJob = (req, res) => {
   const JId = req.params.Jid;
