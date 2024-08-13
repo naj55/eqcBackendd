@@ -26,6 +26,8 @@ router.post("/education", GraduatedController.educationSection);
 router.post("/experience", GraduatedController.experienceSection);
 router.post("/course", GraduatedController.courseSection);
 router.post("/skills", GraduatedController.skillsSection);
+router.post("/language", GraduatedController.languageSection);
+router.post("/aboutMe", GraduatedController.AboutMeSection);
 router.post(
   "/volunteering",
 

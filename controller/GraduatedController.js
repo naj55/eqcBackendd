@@ -223,14 +223,10 @@ exports.skillsSection = (req, res) => {
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
 
-  const language = req.body.language;
-  const level = req.body.level;
-  const skills = req.body.description;
+  const skills = [req.body.skills];
 
   const newSkills = new Section({
     title: "Skills",
-    language: language,
-    level: level,
     skills: skills,
     graduated: GId,
   });
@@ -243,6 +239,53 @@ exports.skillsSection = (req, res) => {
       res.status(401).json(err);
     });
 };
+
+exports.languageSection = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+
+  const language = req.body.language;
+  const level = req.body.level;
+
+  const newLanguage = new Section({
+    title: "language",
+    language: language,
+    level: level,
+    graduated: GId,
+  });
+  newLanguage
+    .save()
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.AboutMeSection = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+
+  const aboutMe = req.body.aboutMe;
+
+  const newAboutMe = new Section({
+    title: "About Me",
+    aboutMe: aboutMe,
+    graduated: GId,
+  });
+  newAboutMe
+    .save()
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
 exports.volunteeringSection = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
