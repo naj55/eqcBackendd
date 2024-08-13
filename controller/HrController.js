@@ -17,6 +17,8 @@ exports.postAddJob = (req, res) => {
   const D = res.locals.decoder;
   const HId = res.locals.decoder.result._id;
 
+  console.log("the decode", D);
+
   NameInput = req.body.jobname;
   sdateInput = req.body.sdate;
   edateInput = req.body.edate;
@@ -157,10 +159,12 @@ exports.listApplication = (req, res) => {
     .populate("GraduatedId")
     .populate("Job")
     .then((result) => {
+      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
       res.status(401).json(err);
+      console.log(err);
     });
 };
 

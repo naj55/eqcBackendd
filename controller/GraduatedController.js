@@ -87,15 +87,24 @@ exports.applyJob = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
-  const newApplication = new Application({
-    Graduated: GId,
-    Job: Jid,
-    status: "wait",
-  });
-  newApplication
-    .save()
+
+  Graduated.findOne({ graduated: GId })
     .then((result) => {
-      res.status(200).json(result);
+      const IdG = result._id;
+      const newApplication = new Application({
+        GraduatedId: IdG,
+        Graduated: GId,
+        Job: Jid,
+        status: "wait",
+      });
+      newApplication
+        .save()
+        .then((result) => {
+          res.status(200).json(result);
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -289,8 +298,9 @@ exports.ViewJob = (req, res) => {
 exports.ViewGraduate = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
-  const Gemail = decoded.unique_name;
-  Graduated.findOne({ email: Gemail })
+  // const Gemail = decoded.unique_name;
+  const GId = decoded.appid;
+  Graduated.findOne({ graduated: GId })
     .then((result) => {
       res.status(200).json(result);
     })
