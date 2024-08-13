@@ -196,7 +196,7 @@ exports.courseSection = (req, res) => {
   const GId = decoded.appid;
 
   const course = req.body.course;
-  const from = req.body.provider;
+  const from = req.body.from;
   const sartDate = req.body.sartDate;
   const endDate = req.body.endDate;
 
