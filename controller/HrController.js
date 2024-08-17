@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
-
+const nodemailer = require("nodemailer");
 ///MODELS
 const Company = require("../model/Company");
 const Hr = require("../model/Hr");
@@ -84,6 +84,26 @@ exports.removeJob = (req, res) => {
     .then(() => {
       Application.deleteMany({ Job: Jid })
         .then(() => {
+          console.log("job is deleted");
+        })
+        .catch((err) => {
+          res.status(401).json(err);
+        });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+//admin job delete job
+exports.softRemoveJob = (req, res) => {
+  const Jid = req.params.Jid;
+  Job.find(Jid)
+    .then((result) => {
+      result.isDeleted = true;
+      Application.find({ Job: Jid })
+        .then((res) => {
+          res.isDeleted = true;
           console.log("job is deleted");
         })
         .catch((err) => {
@@ -281,4 +301,83 @@ exports.ViewJob = (req, res) => {
     .catch((err) => {
       res.status(401).json(err);
     });
+};
+
+// إرسال رمز إعادة تعيين كلمة المرور
+exports.hrForgetPassLink = async (req, res) => {
+  const email = req.body.email;
+
+  try {
+    const hr = await Hr.findOne({ email });
+    if (!hr) {
+      return res.status(404).send("HR not found.");
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString(); // Random 6-digit code
+    hr.resetCode = resetCode;
+    hr.resetCodeExpiration = Date.now() + 3600000; // 1 hour
+
+    await hr.save();
+    console.log("Reset code saved");
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "aoleqc@gmail.com",
+        pass: "exse plzx hdjy tsrj", // Consider using environment variables for sensitive information
+      },
+    });
+
+    const mailOptions = {
+      from: "aoleqc@gmail.com",
+      to: email,
+      subject: "Password Reset Code",
+      text: `Your password reset code is: ${resetCode}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).send("Error sending email.");
+      } else {
+        console.log("Email sent: " + info.response);
+        return res.send("Password reset code sent to your email.");
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error.");
+  }
+};
+
+exports.hrResetPassword = async (req, res) => {
+  const email = req.body.email;
+  const resetCode = req.body.resetCode;
+  const newPassword = req.body.newPassword;
+
+  try {
+    const hr = await Hr.findOne({ email });
+    if (!hr) {
+      return res.status(404).send("HR not found.");
+    }
+
+    // Check if the reset code is valid and not expired
+    if (hr.resetCode !== resetCode || hr.resetCodeExpiration < Date.now()) {
+      return res.status(400).send("Invalid or expired reset code.");
+    }
+
+    // Update the password (add your password hashing logic here)
+    const bcrypt = require("bcrypt");
+    hr.password = await bcrypt.hash(newPassword, 10);
+    hr.resetCode = undefined; // Clear the reset code
+    hr.resetCodeExpiration = undefined; // Clear the expiration
+
+    await hr.save();
+    console.log("Password updated successfully.");
+
+    return res.send("Password has been reset successfully.");
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error.");
+  }
 };

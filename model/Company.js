@@ -23,6 +23,7 @@ const CompanySchema = new schema(
         ref: "job",
       },
     ],
+    isDeleted: { type: Boolean, require: true },
   },
   {
     timestamps: true,

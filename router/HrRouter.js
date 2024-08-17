@@ -36,5 +36,6 @@ router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
 router.get("/listApplication", HrController.listApplication);
 router.patch("/StateRejected/:Aid", HrController.StateRejected);
 router.patch("/StateAccept/:Aid", HrController.StateAccept);
-
+router.post("/hrForgetPassLink", HrController.hrForgetPassLink);
+router.post("/hrResetPassword", HrController.hrResetPassword);
 module.exports = router;

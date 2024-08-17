@@ -21,6 +21,9 @@ const HrSchema = new schema(
         ref: "Job",
       },
     ],
+    resetCode: String,
+    resetCodeExpiration: Date,
+    isDeleted: { type: Boolean, require: true },
   },
   {
     timestamps: true,

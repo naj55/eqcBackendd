@@ -23,6 +23,7 @@ const JobSchema = new schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hr",
     },
+    isDeleted: { type: Boolean, require: true },
   },
   {
     timestamps: true,
