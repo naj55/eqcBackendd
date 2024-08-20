@@ -35,12 +35,15 @@ router.post(
 );
 router.get("/ViewJob/:Jid", GraduatedController.ViewJob);
 router.get("/createCv", GraduatedController.createCv);
+router.get("/createCv/:Gid", GraduatedController.getCreateCv);
 router.get("/ViewGraduate", GraduatedController.ViewGraduate);
 router.get("/getEducation", GraduatedController.getEducation);
 router.get("/getExperience", GraduatedController.getExperience);
 router.get("/getCourse", GraduatedController.getCourse);
 router.get("/getSkills", GraduatedController.getSkills);
 router.get("/getVolunteering", GraduatedController.getVolunteering);
+router.get("/getLanguage", GraduatedController.getLanguage);
+router.get("/getAboutMe", GraduatedController.getAboutMe);
 
 router.get("/authenticateToken", GraduatedController.authenticateToken);
 
