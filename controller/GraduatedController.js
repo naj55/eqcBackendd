@@ -14,6 +14,8 @@ const Section = require("../model/Section");
 
 //GraduatedSignUp
 exports.GraduatedInfo = async (req, res) => {
+  console.log("here");
+
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
@@ -23,6 +25,7 @@ exports.GraduatedInfo = async (req, res) => {
   const phone = req.body.phone;
   const NId = req.body.NId;
   const address = req.body.address;
+  const major = req.body.major;
 
   const NewGraduated = new Graduated({
     name: name,
@@ -31,12 +34,15 @@ exports.GraduatedInfo = async (req, res) => {
     NId: NId,
     address: address,
     graduated: GId,
+    major: major,
   });
   NewGraduated.save()
     .then((result) => {
       res.status(200).json(result);
     })
     .catch((err) => {
+      console.log(err);
+
       res.status(401).json(err);
     });
 };
@@ -218,26 +224,70 @@ exports.courseSection = (req, res) => {
     });
 };
 
-exports.skillsSection = (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  const decoded = jwt.decode(token);
-  const GId = decoded.appid;
+exports.skillsSection = async (req, res) => {
+  try {
+    // استخراج التوكن وفك تشفيره لاستخراج المعرف
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ message: "Authorization token missing" });
+    }
 
-  const skills = [req.body.skills];
+    const decoded = jwt.decode(token);
+    const GId = decoded.appid;
 
-  const newSkills = new Section({
-    title: "Skills",
-    skills: skills,
-    graduated: GId,
-  });
-  newSkills
-    .save()
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
+    // جلب المهارات من جسم الطلب (Body)
+    const skillsArray = req.body;
+
+    // التحقق من صحة المهارات والتأكد من تحويل كل عنصر إلى نص
+    if (!Array.isArray(skillsArray) || skillsArray.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Skills should be a non-empty array" });
+    }
+
+    // تصفية المهارات وتحويل كل عنصر إلى نص مع تجاهل العناصر غير الصالحة
+    const filteredSkills = skillsArray
+      .map((skill) => {
+        if (skill && typeof skill === "string") {
+          return skill; // إذا كانت المهارة نصًا، أعدها كما هي
+        } else if (skill && typeof skill === "object" && skill.name) {
+          return skill.name; // إذا كانت المهارة كائنًا يحتوي على حقل 'name'، أعد الاسم
+        } else {
+          return null; // إذا كانت المهارة غير صالحة، أعد null
+        }
+      })
+      .filter((skill) => skill !== null); // إزالة العناصر غير الصالحة
+
+    if (filteredSkills.length === 0) {
+      return res.status(400).json({ message: "No valid skills found" });
+    }
+
+    // العثور على الخريج باستخدام المعرف المستخرج من التوكن
+    const graduated = await Graduated.findOne({ graduated: GId });
+    if (!graduated) {
+      return res.status(404).json({ message: "Graduated not found" });
+    }
+
+    // استخدام map لحفظ كل مهارة بشكل مستقل في قاعدة البيانات
+    const savedSkills = await Promise.all(
+      filteredSkills.map(async (skill) => {
+        const newSkill = new Section({
+          title: "Skills",
+          skills: skill, // حفظ كل مهارة بشكل منفصل كنص
+          graduated: GId,
+        });
+        return newSkill.save();
+      })
+    );
+
+    // إرسال الاستجابة بالنجاح مع النتائج المحفوظة
+    res.status(200).json(savedSkills);
+  } catch (err) {
+    // إرسال استجابة بالخطأ في حالة حدوث مشكلة
+    res
+      .status(500)
+      .json({ message: "Error saving skills", error: err.message });
+  }
 };
 
 exports.languageSection = (req, res) => {
@@ -270,6 +320,7 @@ exports.AboutMeSection = (req, res) => {
   const GId = decoded.appid;
 
   const aboutMe = req.body.aboutMe;
+  console.log(aboutMe);
 
   const newAboutMe = new Section({
     title: "About Me",
@@ -291,7 +342,7 @@ exports.volunteeringSection = (req, res) => {
   const decoded = jwt.decode(token);
   const GId = decoded.appid;
 
-  const from = req.body.organization;
+  const from = req.body.from;
   const hours = req.body.hours;
 
   const volunteering = new Section({
@@ -324,6 +375,18 @@ exports.createCv = (req, res) => {
       res.status(401).json(err);
     });
 };
+exports.getCreateCv = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+  Section.find({ graduated: GId })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
 
 //hr job List job
 exports.ViewJob = (req, res) => {
@@ -345,6 +408,8 @@ exports.ViewGraduate = (req, res) => {
   const GId = decoded.appid;
   Graduated.findOne({ graduated: GId })
     .then((result) => {
+      console.log(result);
+
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -378,17 +443,30 @@ exports.getExperience = (req, res) => {
     });
 };
 
-exports.getSkills = (req, res) => {
-  const token = req.headers["authorization"]?.split(" ")[1];
-  const decoded = jwt.decode(token);
-  const GId = decoded.appid;
-  Section.find({ graduated: GId, title: "Skills" })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      res.status(401).json(err);
+exports.getSkills = async (req, res) => {
+  try {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    const decoded = jwt.decode(token);
+    const GId = decoded.appid;
+
+    // جلب بيانات الطالب باستخدام GId
+    const graduated = await Graduated.findOne({ graduated: GId });
+
+    if (!graduated) {
+      return res.status(404).json({ message: "Graduated not found" });
+    }
+
+    // جلب المهارات من قاعدة البيانات باستخدام معرف الطالب
+    const skills = await Section.find({
+      graduated: graduated._id,
+      title: "Skills",
     });
+
+    // إرجاع النتيجة
+    res.status(200).json(skills);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching skills", error: err });
+  }
 };
 
 exports.getVolunteering = (req, res) => {
@@ -423,6 +501,33 @@ exports.getApplication = (req, res) => {
   Application.find({ graduated: GId })
     .then((result) => {
       res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.getLanguage = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+  Section.find({ graduated: GId, title: "language" })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.getAboutMe = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.appid;
+  Section.find({ graduated: GId, title: "About Me" })
+    .then((result) => {
+      res.status(200).json(result);
+      console.log(result);
     })
     .catch((err) => {
       res.status(401).json(err);
