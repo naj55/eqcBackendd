@@ -416,6 +416,17 @@ exports.ViewGraduate = (req, res) => {
       res.status(401).json(err);
     });
 };
+exports.ViewGraduateById = (req, res) => {
+  const GId = req.params.Gid;
+
+  Graduated.findOne({ graduated: GId })
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
 
 exports.getEducation = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
