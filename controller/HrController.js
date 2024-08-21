@@ -17,8 +17,6 @@ exports.postAddJob = (req, res) => {
   const D = res.locals.decoder;
   const HId = res.locals.decoder.result._id;
 
-  console.log("the decode", D);
-
   NameInput = req.body.jobname;
   sdateInput = req.body.sdate;
   edateInput = req.body.edate;
@@ -104,7 +102,6 @@ exports.softRemoveJob = (req, res) => {
       Application.find({ Job: Jid })
         .then((res) => {
           res.isDeleted = true;
-          console.log("job is deleted");
         })
         .catch((err) => {
           res.status(401).json(err);
@@ -179,103 +176,115 @@ exports.listApplication = (req, res) => {
     .populate("GraduatedId")
     .populate("Job")
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
       res.status(401).json(err);
-      console.log(err);
     });
 };
 
 //change state of graduated to candidate
-exports.StateRejected = (req, res) => {
-  const Aid = req.params.Aid;
-  Application.findOne({ _id: Aid })
-    .then((foundedApp) => {
-      GID = foundedApp.Graduated;
-      foundedApp.status = "rejected";
-      foundedApp.save().then((result) => {
-        res.status(200).json(result);
-      });
-      Graduated.findById(GID)
-        .then((result) => {
-          const Gemail = result.email;
-          var transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-              user: "aoleqc@gmail.com",
-              pass: "exse plzx hdjy tsrj",
-            },
-          });
 
-          var mailOptions = {
-            from: "aoleqc@gmail.com",
-            to: Gemail,
-            subject: "Sending Email using Node.js",
-            text: "نعتذر منك لم يتم قبول طلبك للتقديم على الوظيفه",
-          };
+exports.StateRejected = async (req, res) => {
+  try {
+    const Aid = req.params.Aid;
+    const foundedApp = await Application.findOne({ _id: Aid });
 
-          transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-              console.log(error);
-            } else {
-              console.log("Email sent: " + info.response);
-            }
-          });
-        })
-        .catch((error) => {
-          res.status(401).json(err);
-        });
-    })
-    .catch((err) => {
-      res.status(401).json(err);
+    if (!foundedApp) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    const GID = foundedApp.Graduated;
+    foundedApp.status = "rejected";
+    const savedApp = await foundedApp.save();
+
+    const graduate = await Graduated.findOne({ graduated: GID });
+
+    if (!graduate) {
+      return res.status(404).json({ error: "Graduate not found" });
+    }
+
+    const Gemail = graduate.email;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "aoleqc@gmail.com",
+        pass: "exse plzx hdjy tsrj",
+      },
     });
+
+    const mailOptions = {
+      from: "aoleqc@gmail.com",
+      to: Gemail,
+      subject: "Sending Email using Node.js",
+      text: "نعتذر منك لم يتم قبول طلبك للتقديم على الوظيفه",
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    return res.status(200).json(savedApp);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 //change state of graduated to candidate
-exports.StateAccept = (req, res) => {
-  const Aid = req.params.Aid;
-  Application.findOne({ _id: Aid })
-    .then((foundedApp) => {
-      GID = foundedApp.Graduated;
-      foundedApp.status = "accept";
-      foundedApp.save().then((result) => {
-        res.status(200).json(result);
-        Graduated.findById(GID)
-          .then((result) => {
-            const Gemail = result.email;
-            var transporter = nodemailer.createTransport({
-              service: "gmail",
-              auth: {
-                user: "aoleqc@gmail.com",
-                pass: "exse plzx hdjy tsrj",
-              },
-            });
 
-            var mailOptions = {
-              from: "aoleqc@gmail.com",
-              to: Gemail,
-              subject: "Sending Email using Node.js",
-              text: "لقد تم قبول طلبك للتقديم على الوظيفه",
-            };
+exports.StateAccept = async (req, res) => {
+  try {
+    const Aid = req.params.Aid;
+    const foundedApp = await Application.findOne({ _id: Aid });
 
-            transporter.sendMail(mailOptions, function (error, info) {
-              if (error) {
-                console.log(error);
-              } else {
-                console.log("Email sent: " + info.response);
-              }
-            });
-          })
-          .catch((error) => {
-            res.status(401).json(err);
-          });
-      });
-    })
-    .catch((err) => {
-      res.status(401).json(err);
+    if (!foundedApp) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    const GID = foundedApp.Graduated;
+    foundedApp.status = "accept";
+    const savedApp = await foundedApp.save();
+
+    const graduate = await Graduated.findOne({ graduated: GID });
+
+    if (!graduate) {
+      return res.status(404).json({ error: "Graduate not found" });
+    }
+
+    const Gemail = graduate.email;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "aoleqc@gmail.com",
+        pass: "exse plzx hdjy tsrj",
+      },
     });
+
+    const mailOptions = {
+      from: "aoleqc@gmail.com",
+      to: Gemail,
+      subject: "Sending Email using Node.js",
+      text: "لقد تم قبول طلبك للتقديم على الوظيفه",
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    return res.status(200).json(savedApp);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 //view graduated cv
@@ -318,8 +327,6 @@ exports.hrForgetPassLink = async (req, res) => {
     hr.resetCodeExpiration = Date.now() + 3600000; // 1 hour
 
     await hr.save();
-    console.log("Reset code saved");
-
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -363,7 +370,9 @@ exports.hrResetPassword = async (req, res) => {
 
     // Check if the reset code is valid and not expired
     if (hr.resetCode !== resetCode || hr.resetCodeExpiration < Date.now()) {
-      return res.status(400).send("Invalid or expired reset code.");
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired reset code." });
     }
 
     // Update the password (add your password hashing logic here)
@@ -373,11 +382,9 @@ exports.hrResetPassword = async (req, res) => {
     hr.resetCodeExpiration = undefined; // Clear the expiration
 
     await hr.save();
-    console.log("Password updated successfully.");
-
-    return res.send("Password has been reset successfully.");
+    return res.json({ message: "Password reset successful." });
   } catch (error) {
     console.error(error);
-    return res.status(500).send("Internal server error.");
+    return res.status(500).json({ message: "Internal server error." });
   }
 };
