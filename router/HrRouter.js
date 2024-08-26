@@ -35,8 +35,10 @@ router.patch(
 router.get("/ViewJob/:id", checkToken, HrController.ViewJob);
 router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
 router.get("/listApplication", checkToken, HrController.listApplication);
+router.get("/listCandidate", checkToken, HrController.listCandidate);
 router.patch("/StateRejected/:Aid", HrController.StateRejected);
 router.patch("/StateAccept/:Aid", HrController.StateAccept);
+router.patch("/StateCandidate/:Aid", HrController.StateCandidate);
 router.post("/hrForgetPassLink", HrController.hrForgetPassLink);
 router.post("/hrResetPassword", HrController.hrResetPassword);
 module.exports = router;

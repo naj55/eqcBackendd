@@ -214,26 +214,40 @@ exports.listApplication = (req, res) => {
     });
 };
 
-exports.listApplicationm = (req, res) => {
+exports.listCandidate = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  console.log("the HId:", HId);
+  Job.find({ Hr: HId })
+    .then((jobs) => {
+      console.log("Jobs found:", jobs);
 
-  Application.find({ status: "wait" })
-    .populate("GraduatedId")
-    .populate("Job")
-    .then((applications) => {
-      Job.find({ Hr: HId })
-        .then((result) => {
-          res.status(200).json({ result });
+      // Check if any jobs were found
+      if (jobs.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No jobs found for this HR ID." });
+      }
+
+      // Extract job IDs
+      const jid = jobs.map((job) => job._id);
+      console.log("Job IDs:", jid);
+
+      Application.find({ Job: { $in: jid }, status: "candidate" })
+        .populate("GraduatedId")
+        .populate("Job")
+        .then((applications) => {
+          console.log("Applications found:", applications);
+          res.status(200).json(applications);
         })
-        .catch((error) => {
-          console.error("Error fetching jobs:", error);
-          res.status(500).json({ message: "Error fetching jobs", error });
+        .catch((err) => {
+          console.error("Error fetching applications:", err);
+          res
+            .status(500)
+            .json({ message: "Error fetching applications", error: err });
         });
     })
-    .catch((err) => {
-      console.error("Error fetching applications:", err);
-      res.status(500).json({ message: "Error fetching applications", err });
+    .catch((error) => {
+      console.error("Error fetching jobs:", error);
+      res.status(500).json({ message: "Error fetching jobs", error });
     });
 };
 //change state of graduated to candidate
@@ -332,6 +346,56 @@ exports.StateAccept = async (req, res) => {
         console.log("Email sent: " + info.response);
       }
     });
+
+    return res.status(200).json(savedApp);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.StateCandidate = async (req, res) => {
+  try {
+    const Aid = req.params.Aid;
+    const foundedApp = await Application.findOne({ _id: Aid });
+
+    if (!foundedApp) {
+      return res.status(404).json({ error: "Application not found" });
+    }
+
+    const GID = foundedApp.Graduated;
+    foundedApp.status = "candidate";
+    const savedApp = await foundedApp.save();
+
+    const graduate = await Graduated.findOne({ graduated: GID });
+
+    if (!graduate) {
+      return res.status(404).json({ error: "Graduate not found" });
+    }
+
+    // const Gemail = graduate.email;
+    // const transporter = nodemailer.createTransport({
+    //   service: "gmail",
+    //   auth: {
+    //     user: "aoleqc@gmail.com",
+    //     pass: "exse plzx hdjy tsrj",
+    //   },
+    // });
+
+    // const mailOptions = {
+    //   from: "aoleqc@gmail.com",
+    //   to: Gemail,
+    //   subject: "Sending Email using Node.js",
+    //   text: "لقد تم ترشيحك طلبك للتقديم على الوظيفه",
+    // };
+
+    // transporter.sendMail(mailOptions, function (error, info) {
+    //   if (error) {
+    //     console.log(error);
+    //   } else {
+    //     console.log("Email sent: " + info.response);
+    //   }
+    // });
 
     return res.status(200).json(savedApp);
   } catch (error) {
