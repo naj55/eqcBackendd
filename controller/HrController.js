@@ -170,19 +170,68 @@ exports.Hrlogin = async (req, res) => {
       res.status(401).json(err);
     });
 };
-//view listApplication of graduated
+// view listApplication of graduated
 exports.listApplication = (req, res) => {
-  Application.find({ status: "wait" })
-    .populate("GraduatedId")
-    .populate("Job")
-    .then((result) => {
-      res.status(200).json(result);
+  const HId = res.locals.decoder.result._id;
+  console.log("the HId:", HId);
+
+  Job.find({ Hr: HId })
+    .then((jobs) => {
+      console.log("Jobs found:", jobs);
+
+      // Check if any jobs were found
+      if (jobs.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No jobs found for this HR ID." });
+      }
+
+      // Extract job IDs
+      const jid = jobs.map((job) => job._id);
+      console.log("Job IDs:", jid);
+
+      Application.find({ Job: { $in: jid }, status: "wait" })
+        .populate("GraduatedId")
+        .populate("Job")
+        .then((applications) => {
+          console.log("Applications found:", applications);
+          res.status(200).json(applications);
+        })
+        .catch((err) => {
+          console.error("Error fetching applications:", err);
+          res
+            .status(500)
+            .json({ message: "Error fetching applications", error: err });
+        });
     })
-    .catch((err) => {
-      res.status(401).json(err);
+    .catch((error) => {
+      console.error("Error fetching jobs:", error);
+      res.status(500).json({ message: "Error fetching jobs", error });
     });
 };
 
+exports.listApplicationm = (req, res) => {
+  const HId = res.locals.decoder.result._id;
+  console.log("the HId:", HId);
+
+  Application.find({ status: "wait" })
+    .populate("GraduatedId")
+    .populate("Job")
+    .then((applications) => {
+      Job.find({ Hr: HId })
+        .then((result) => {
+          res.status(200).json({ result });
+        })
+        .catch((error) => {
+          console.error("Error fetching jobs:", error);
+          res.status(500).json({ message: "Error fetching jobs", error });
+        });
+    })
+    .catch((err) => {
+      console.error("Error fetching applications:", err);
+      res.status(500).json({ message: "Error fetching applications", err });
+    });
+};
 //change state of graduated to candidate
 
 exports.StateRejected = async (req, res) => {

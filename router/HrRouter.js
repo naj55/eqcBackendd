@@ -13,6 +13,7 @@ const HrController = require("../controller/HrController");
 //middeleware
 const checkToken = require("../middleware/checkToken");
 const checkHrAuthrization = require("../middleware/checkHrAuthrization");
+const authMiddleware = require("../middleware/authMiddleware");
 
 //Hr Login
 router.post("/hrlogin", HrController.Hrlogin);
@@ -33,7 +34,7 @@ router.patch(
 );
 router.get("/ViewJob/:id", checkToken, HrController.ViewJob);
 router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
-router.get("/listApplication", HrController.listApplication);
+router.get("/listApplication", checkToken, HrController.listApplication);
 router.patch("/StateRejected/:Aid", HrController.StateRejected);
 router.patch("/StateAccept/:Aid", HrController.StateAccept);
 router.post("/hrForgetPassLink", HrController.hrForgetPassLink);
