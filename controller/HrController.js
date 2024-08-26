@@ -159,6 +159,10 @@ exports.Hrlogin = async (req, res) => {
     .then(async (result) => {
       const hashedPass = result.password;
       const compare = await bcrypt.compare(password, hashedPass);
+      if (!compare) {
+        return res.status(404).json({ error: "كلمة المرور غير صحيحة" });
+      }
+
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
           expiresIn: "1d",
@@ -414,14 +418,14 @@ exports.hrResetPassword = async (req, res) => {
   try {
     const hr = await Hr.findOne({ email });
     if (!hr) {
-      return res.status(404).send("HR not found.");
+      return res.status(404).send("الحساب غير موجود");
     }
 
     // Check if the reset code is valid and not expired
     if (hr.resetCode !== resetCode || hr.resetCodeExpiration < Date.now()) {
       return res
         .status(400)
-        .json({ message: "Invalid or expired reset code." });
+        .json({ message: "رمز التحقق غير صالح او منتهي الصلاحية" });
     }
 
     // Update the password (add your password hashing logic here)
@@ -431,9 +435,9 @@ exports.hrResetPassword = async (req, res) => {
     hr.resetCodeExpiration = undefined; // Clear the expiration
 
     await hr.save();
-    return res.json({ message: "Password reset successful." });
+    return res.json({ message: "كلمة المرور تم تغييرها بنجاح" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal server error." });
+    return res.status(500).json({ message: "خطأ في عملية تغيير كلمة المرور" });
   }
 };
