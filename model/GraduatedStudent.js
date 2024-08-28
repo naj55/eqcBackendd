@@ -7,8 +7,8 @@ const GraduatedSchema = new schema(
   {
     name: { type: String, require: true },
     email: { type: String, unique: true },
-    phone: { type: String, required: true, unique: true },
-    NId: { type: String, required: true, unique: true },
+    phone: { type: String },
+    NId: { type: String },
     address: { type: String, require: true },
     graduated: {
       type: mongoose.Schema.Types.String,

@@ -50,6 +50,7 @@ const SectionSchema = new schema(
     skills: {
       type: String,
     },
+
     graduated: {
       type: mongoose.Schema.Types.String,
       ref: "Graduated",

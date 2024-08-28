@@ -45,7 +45,7 @@ router.get("/getSkills", GraduatedController.getSkills);
 router.get("/getVolunteering", GraduatedController.getVolunteering);
 router.get("/getLanguage", GraduatedController.getLanguage);
 router.get("/getAboutMe", GraduatedController.getAboutMe);
-
-router.get("/authenticateToken", GraduatedController.authenticateToken);
+router.get("/getAboutMe", GraduatedController.getAboutMe);
+router.get("/activeGraduatedLogin", GraduatedController.activeGraduatedLogin);
 
 module.exports = router;
