@@ -189,25 +189,47 @@ exports.listJobApplication = (req, res) => {
           .status(404)
           .json({ message: "No jobs found for this HR ID." });
       }
-
-      // // Extract job IDs
-      // const jid = jobs.map((job) => job._id);
-      // console.log("Job IDs:", jid);
-
-      // Application.find({ Job: { $in: jid }, status: "wait" })
-      //   .populate("GraduatedId")
-      //   .populate("Job")
-      //   .then((applications) => {
-      //     console.log("Applications found:", applications);
-      //     res.status(200).json(applications);
-      //   })
-      //   .catch((err) => {
-      //     console.error("Error fetching applications:", err);
-      //     res
-      //       .status(500)
-      //       .json({ message: "Error fetching applications", error: err });
-      //   });
       res.status(200).json(jobs);
+    })
+    .catch((error) => {
+      console.error("Error fetching jobs:", error);
+      res.status(500).json({ message: "Error fetching jobs", error });
+    });
+};
+
+exports.listApplication = (req, res) => {
+  const HId = res.locals.decoder.result._id;
+  console.log("the HId:", HId);
+  const Jid = req.params.jid;
+
+  Job.find({ Hr: HId, _id: Jid })
+    .then((jobs) => {
+      console.log("Jobs found:", jobs);
+
+      // Check if any jobs were found
+      if (jobs.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No jobs found for this HR ID." });
+      }
+
+      // Extract job IDs
+      const jid = jobs.map((job) => job._id);
+      console.log("Job IDs:", jid);
+
+      Application.find({ Job: { $in: jid }, status: "wait" })
+        .populate("GraduatedId")
+        .populate("Job")
+        .then((applications) => {
+          console.log("Applications found:", applications);
+          res.status(200).json(applications); // Send applications response
+        })
+        .catch((err) => {
+          console.error("Error fetching applications:", err);
+          res
+            .status(500)
+            .json({ message: "Error fetching applications", error: err });
+        });
     })
     .catch((error) => {
       console.error("Error fetching jobs:", error);
