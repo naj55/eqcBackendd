@@ -56,6 +56,8 @@ exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
   Job.findOne({ Hr: HId })
     .then((result) => {
+      console.log(result);
+      
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -68,6 +70,7 @@ exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
   Job.find({ Hr: HId })
     .then((result) => {
+      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
