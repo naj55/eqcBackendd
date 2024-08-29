@@ -70,16 +70,13 @@ exports.GraduatedLogin = (req, res) => {
 
 exports.activeGraduatedLogin = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
+
   const decoded = jwt.decode(token);
   const GId = decoded.oid;
-  console.log(GId);
 
   Graduated.findOne({ graduated: GId })
     .then((result) => {
-      console.log("result");
-      console.log(result);
       if (!result) {
-        console.log("Creating new graduated record...");
         const newGraduated = new Graduated({
           name: "",
           email: "",
@@ -93,22 +90,18 @@ exports.activeGraduatedLogin = (req, res) => {
         return newGraduated
           .save()
           .then(() => {
-            console.log("New graduated record created.");
             res.json({ isNew: true }); // Return a proper response
           })
           .catch((error) => {
-            console.error("Error saving new graduated record:", error);
             res
               .status(500)
               .json({ error: "Failed to save new graduated record." });
           });
       } else {
-        console.log("Graduated record already exists.");
         res.json({ isNew: false }); // Return a proper response
       }
     })
     .catch((err) => {
-      console.error("Error finding graduated record:", err);
       res.status(500).json({ error: "Failed to find graduated record." });
     });
 };

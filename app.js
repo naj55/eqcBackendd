@@ -39,5 +39,5 @@ app.use("/graduated", GraduatedRoute);
 
 //server
 app.listen(8000, () => {
-  console.log("Server is listening on port 8000");
+  console.log(`server is running on port 8000 in http://localhost:8000`);
 });

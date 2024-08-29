@@ -189,6 +189,7 @@ exports.postAddCompany = (req, res) => {
 //admin company List Company
 exports.listCompanies = (req, res) => {
   Company.find()
+    .populate("hr")
     .then((result) => {
       res.status(200).json(result);
     })
@@ -321,6 +322,7 @@ exports.postAddHr = async (req, res) => {
 //admin Hr List
 exports.listHr = (req, res) => {
   Hr.find()
+    .populate("company")
     .then((result) => {
       res.status(200).json(result);
     })
@@ -670,7 +672,7 @@ exports.accebtedJob = (req, res) => {
   Job.findById(JId)
     .then((result) => {
       const hrId = result.Hr;
-      Hr.findById(hrId)
+      Hr.findById({ _id: hrId })
         .then((r) => {
           const HrEmail = r.email;
           result.status = "accepted";
@@ -701,7 +703,8 @@ exports.accebtedJob = (req, res) => {
           });
         })
         .catch((error) => {
-          res.status(401).json(err);
+          res.status(401).json(error);
+          console.log(error);
         });
     })
     .catch((err) => {
