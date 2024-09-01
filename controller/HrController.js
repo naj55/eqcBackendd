@@ -56,8 +56,6 @@ exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
   Job.findOne({ Hr: HId })
     .then((result) => {
-      console.log(result);
-      
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -70,7 +68,6 @@ exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
   Job.find({ Hr: HId })
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -180,12 +177,8 @@ exports.Hrlogin = async (req, res) => {
 // view listApplication of graduated
 exports.listJobApplication = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  console.log("the HId:", HId);
-
   Job.find({ Hr: HId })
     .then((jobs) => {
-      console.log("Jobs found:", jobs);
-
       // Check if any jobs were found
       if (jobs.length === 0) {
         return res
@@ -202,13 +195,10 @@ exports.listJobApplication = (req, res) => {
 
 exports.listApplication = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  console.log("the HId:", HId);
   const Jid = req.params.jid;
 
   Job.find({ Hr: HId, _id: Jid })
     .then((jobs) => {
-      console.log("Jobs found:", jobs);
-
       // Check if any jobs were found
       if (jobs.length === 0) {
         return res
@@ -218,13 +208,10 @@ exports.listApplication = (req, res) => {
 
       // Extract job IDs
       const jid = jobs.map((job) => job._id);
-      console.log("Job IDs:", jid);
-
       Application.find({ Job: { $in: jid }, status: "wait" })
         .populate("GraduatedId")
         .populate("Job")
         .then((applications) => {
-          console.log("Applications found:", applications);
           res.status(200).json(applications); // Send applications response
         })
         .catch((err) => {
@@ -240,41 +227,34 @@ exports.listApplication = (req, res) => {
     });
 };
 
-exports.listCandidate = (req, res) => {
-  const HId = res.locals.decoder.result._id;
-  Job.find({ Hr: HId })
-    .then((jobs) => {
-      console.log("Jobs found:", jobs);
+exports.listCandidate = async (req, res) => {
+  try {
+    const HId = res.locals.decoder.result._id;
 
-      // Check if any jobs were found
-      if (jobs.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No jobs found for this HR ID." });
-      }
+    const jobs = await Job.find({ Hr: HId });
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "No jobs found for this HR ID." });
+    }
 
-      // Extract job IDs
-      const jid = jobs.map((job) => job._id);
-      console.log("Job IDs:", jid);
+    const jobIds = jobs.map((job) => job._id);
 
-      Application.find({ Job: { $in: jid }, status: "candidate" })
-        .populate("GraduatedId")
-        .populate("Job")
-        .then((applications) => {
-          console.log("Applications found:", applications);
-          res.status(200).json(applications);
-        })
-        .catch((err) => {
-          console.error("Error fetching applications:", err);
-          res
-            .status(500)
-            .json({ message: "Error fetching applications", error: err });
-        });
+    const applications = await Application.find({
+      Job: { $in: jobIds },
+      status: "candidate",
     })
-    .catch((error) => {
-      console.error("Error fetching jobs:", error);
-      res.status(500).json({ message: "Error fetching jobs", error });
-    });
+      .populate("GraduatedId")
+      .populate("Job");
+
+    res.status(200).json(applications);
+  } catch (error) {
+    if (error.message.includes("jobs")) {
+      return res.status(500).json({ message: "Error fetching jobs", error });
+    } else {
+      return res
+        .status(500)
+        .json({ message: "Error fetching applications", error });
+    }
+  }
 };
 //change state of graduated to candidate
 
@@ -487,10 +467,8 @@ exports.hrForgetPassLink = async (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log(error);
         return res.status(500).send("Error sending email.");
       } else {
-        console.log("Email sent: " + info.response);
         return res.send("Password reset code sent to your email.");
       }
     });

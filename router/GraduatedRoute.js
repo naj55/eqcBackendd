@@ -15,6 +15,7 @@ const checkToken = require("../middleware/checkToken");
 
 //Graduated SignUp
 router.post("/GraduatedInfo", GraduatedController.GraduatedInfo);
+router.put("/GraduatedUpdateInfo", GraduatedController.updateGraduated);
 //Graduated Login
 router.post("/GraduatedLogin", GraduatedController.GraduatedLogin);
 // //Hr Job CRUD router
@@ -47,5 +48,7 @@ router.get("/getLanguage", GraduatedController.getLanguage);
 router.get("/getAboutMe", GraduatedController.getAboutMe);
 router.get("/getAboutMe", GraduatedController.getAboutMe);
 router.get("/activeGraduatedLogin", GraduatedController.activeGraduatedLogin);
+
+router.get("/isHaveCv", GraduatedController.isHaveCv)
 
 module.exports = router;

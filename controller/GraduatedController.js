@@ -14,8 +14,6 @@ const Section = require("../model/Section");
 
 //GraduatedSignUp
 exports.GraduatedInfo = async (req, res) => {
-  console.log("here");
-
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.oid;
@@ -41,10 +39,52 @@ exports.GraduatedInfo = async (req, res) => {
       res.status(200).json(result);
     })
     .catch((err) => {
-      console.log(err);
-
       res.status(401).json(err);
     });
+};
+
+exports.updateGraduated = async (req, res) => {
+  try {
+    const token = req.headers["authorization"]?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const decoded = jwt.decode(token);
+    if (!decoded) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    const GId = decoded.oid;
+
+    const { name, email, phone, NId, address, major } = req.body;
+
+    if (!name || !email || !phone || !NId || !address || !major) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const updatedGraduated = await Graduated.findOneAndUpdate(
+      { graduated: GId },
+      {
+        name: name,
+        email: email,
+        phone: phone,
+        NId: NId,
+        address: address,
+        major: major,
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedGraduated) {
+      return res.status(404).json({ error: "Graduated not found" });
+    }
+
+    res.status(200).json(updatedGraduated);
+  } catch (error) {
+    console.error("Error updating graduated:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 // GraduatedLogin
@@ -78,11 +118,6 @@ exports.activeGraduatedLogin = (req, res) => {
     .then((result) => {
       if (!result) {
         const newGraduated = new Graduated({
-          name: "",
-          email: "",
-          phone: "",
-          NId: "",
-          address: "",
           graduated: GId,
           isDeleted: false,
         });
@@ -131,7 +166,6 @@ exports.applyJob = (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.oid;
-  console.log();
 
   Graduated.findOne({ graduated: GId })
     .then((result) => {
@@ -359,7 +393,6 @@ exports.AboutMeSection = (req, res) => {
   const GId = decoded.oid;
 
   const aboutMe = req.body.aboutMe;
-  console.log(aboutMe);
 
   const newAboutMe = new Section({
     title: "About Me",
@@ -447,8 +480,6 @@ exports.ViewGraduate = (req, res) => {
   const GId = decoded.oid;
   Graduated.findOne({ graduated: GId })
     .then((result) => {
-      console.log(result);
-
       res.status(200).json(result);
     })
     .catch((err) => {
@@ -577,7 +608,6 @@ exports.getAboutMe = (req, res) => {
   Section.find({ graduated: GId, title: "About Me" })
     .then((result) => {
       res.status(200).json(result);
-      console.log(result);
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -588,4 +618,19 @@ exports.authenticateToken = (req, res, next) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) return res.sendStatus(401);
   res.json({ token: token });
+};
+
+exports.isHaveCv = (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1];
+  const decoded = jwt.decode(token);
+  const GId = decoded.oid;
+  Section.find({ graduated: GId, title: "Experience" })
+    .then((result) => {
+      res.status(200).json({
+        isHaveCv: result.length > 0 ? true : false,
+      });
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
 };

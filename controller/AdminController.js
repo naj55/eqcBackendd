@@ -704,7 +704,6 @@ exports.accebtedJob = (req, res) => {
         })
         .catch((error) => {
           res.status(401).json(error);
-          console.log(error);
         });
     })
     .catch((err) => {
