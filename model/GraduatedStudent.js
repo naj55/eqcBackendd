@@ -5,11 +5,11 @@ const { v4: uuidv4 } = require("uuid");
 
 const GraduatedSchema = new schema(
   {
-    name: { type: String, require: true },
+    name: { type: String },
     email: { type: String, unique: true },
     phone: { type: String },
     NId: { type: String },
-    address: { type: String, require: true },
+    address: { type: String },
     graduated: {
       type: mongoose.Schema.Types.String,
     },
