@@ -165,24 +165,35 @@ exports.applyJob = (req, res) => {
   const Jid = req.params.Jid;
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
+  console.log(decoded);
   const GId = decoded.oid;
 
   Graduated.findOne({ graduated: GId })
     .then((result) => {
       const IdG = result._id;
-      const newApplication = new Application({
-        GraduatedId: IdG,
-        Graduated: GId,
-        Job: Jid,
-        status: "wait",
-      });
-      newApplication
-        .save()
-        .then((result) => {
-          res.status(200).json(result);
+      Application.find({ GraduatedId: IdG })
+        .then((applyedJob) => {
+          if (!applyedJob) {
+            const newApplication = new Application({
+              GraduatedId: IdG,
+              Graduated: GId,
+              Job: Jid,
+              status: "wait",
+            });
+            newApplication
+              .save()
+              .then((result) => {
+                res.status(200).json(result);
+              })
+              .catch((err) => {
+                res.status(401).json(err);
+              });
+          } else {
+            res.status(200).json("you already apply to this job");
+          }
         })
-        .catch((err) => {
-          res.status(401).json(err);
+        .catch((error) => {
+          res.status(401).json(error);
         });
     })
     .catch((err) => {
