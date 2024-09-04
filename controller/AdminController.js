@@ -763,3 +763,21 @@ exports.clearJob = (req, res) => {
       res.status(401).json(err);
     });
 };
+
+exports.acceptedGraduated = (req, res) => {
+  Application.find({ status: "accept" })
+    .populate("GraduatedId")
+    .populate({
+      path: "Job",
+      populate: {
+        path: "company", // Assuming the Job schema has a reference to Company
+        model: "Company", // Replace with the actual model name if different
+      },
+    })
+    .then((acceptedGraduated) => {
+      res.status(200).json(acceptedGraduated);
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
