@@ -199,7 +199,7 @@ exports.listCompanies = (req, res) => {
 };
 
 //admin company delete Company cascade
-exports.removeCompany = (req, res) => {
+exports.removeCompany0 = (req, res) => {
   const Cid = req.params.Cid;
 
   Company.findByIdAndDelete(Cid)
@@ -222,6 +222,39 @@ exports.removeCompany = (req, res) => {
     .catch((err) => {
       res.status(401).json(err);
     });
+};
+
+exports.removeCompany = async (req, res) => {
+  try {
+    const Cid = req.params.Cid;
+    const foundedCompany = await Hr.findOne({ _id: Hid });
+
+    if (!foundedHr) {
+      return res.status(404).json({ error: "HR not found" });
+    }
+
+    foundedHr.isDeleted = true;
+
+    // Use find instead of findMany
+    const HrJobs = await Job.find({ Hr: Hid });
+
+    if (HrJobs.length === 0) {
+      return res.status(404).json({ error: "Jobs not found" });
+    }
+
+    // Set isDeleted for each job
+    for (const job of HrJobs) {
+      job.isDeleted = true;
+      await job.save(); // Save each job individually
+    }
+
+    const savedHr = await foundedHr.save();
+
+    return res.status(200).json({ savedHr, deletedJobsCount: HrJobs.length });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 //admin company update Company
@@ -331,24 +364,57 @@ exports.listHr = (req, res) => {
     });
 };
 
-//admin HR delete Hr
-exports.removeHr = (req, res) => {
-  const Hid = req.params.Hid;
-  Hr.findByIdAndDelete(Hid)
-    .then(() => {
-      Job.deleteMany({ Hr: Hid })
-        .then(() => {
-          console.log("job is deleted");
-        })
-        .catch((err) => {
-          res.status(401).json(err);
-        });
-      res.status(200).json("Hr has been deleted");
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
+exports.removeHr = async (req, res) => {
+  try {
+    const Hid = req.params.Hid;
+    const foundedHr = await Hr.findOne({ _id: Hid });
+
+    if (!foundedHr) {
+      return res.status(404).json({ error: "HR not found" });
+    }
+
+    foundedHr.isDeleted = true;
+
+    // Use find instead of findMany
+    const HrJobs = await Job.find({ Hr: Hid });
+
+    if (HrJobs.length === 0) {
+      return res.status(404).json({ error: "Jobs not found" });
+    }
+
+    // Set isDeleted for each job
+    for (const job of HrJobs) {
+      job.isDeleted = true;
+      await job.save(); // Save each job individually
+    }
+
+    const savedHr = await foundedHr.save();
+
+    return res.status(200).json({ savedHr, deletedJobsCount: HrJobs.length });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
+
+// //admin HR delete Hr
+// exports.removeHrr = (req, res) => {
+//   const Hid = req.params.Hid;
+//   Hr.findByIdAndDelete(Hid)
+//     .then(() => {
+//       Job.deleteMany({ Hr: Hid })
+//         .then(() => {
+//           console.log("job is deleted");
+//         })
+//         .catch((err) => {
+//           res.status(401).json(err);
+//         });
+//       res.status(200).json("Hr has been deleted");
+//     })
+//     .catch((err) => {
+//       res.status(401).json(err);
+//     });
+// };
 
 //admin Hr update Hr
 exports.editHr = (req, res) => {
@@ -415,6 +481,7 @@ exports.postAddJob = (req, res) => {
     skills: skillsInput,
     notes: notesInput,
     jobRequirment: jobRequirmentInput,
+    isDeleted: false,
   });
   newJob
     .save()
@@ -450,18 +517,6 @@ exports.availablelistJobs = (req, res) => {
       }
       res.status(200).json(availableJobs);
       return;
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
-};
-
-//admin job delete job
-exports.removeJob = (req, res) => {
-  const Jid = req.params.Jid;
-  Job.findByIdAndDelete(Jid)
-    .then(() => {
-      res.status(200).json("job has been deleted");
     })
     .catch((err) => {
       res.status(401).json(err);
@@ -547,16 +602,33 @@ exports.listGraduated = (req, res) => {
     });
 };
 
-//admin Graduated delete job
-exports.removeGraduated = (req, res) => {
-  const Gid = req.params.Gid;
-  Graduated.findByIdAndDelete(Gid)
-    .then(() => {
-      res.status(200).json("Graduated has been deleted");
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
+// //admin Graduated delete job
+// exports.removeGraduated = (req, res) => {
+//   const Gid = req.params.Gid;
+//   Graduated.findByIdAndDelete(Gid)
+//     .then(() => {
+//       res.status(200).json("Graduated has been deleted");
+//     })
+//     .catch((err) => {
+//       res.status(401).json(err);
+//     });
+// };
+
+exports.removeGraduated = async (req, res) => {
+  try {
+    const Gid = req.params.Gid;
+    const foundedGraduated = await Graduated.findOne({ _id: Gid });
+
+    if (!foundedGraduated) {
+      return res.status(404).json({ error: "student not found" });
+    }
+    foundedGraduated.isDeleted = true;
+    const savedApp = await foundedGraduated.save();
+    return res.status(200).json(savedApp);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 //admin Graduated update Graduated
@@ -781,3 +853,32 @@ exports.acceptedGraduated = (req, res) => {
       res.status(401).json(err);
     });
 };
+
+exports.removeJob = async (req, res) => {
+  try {
+    const Jid = req.params.Jid;
+    const foundedjob = await Job.findOne({ _id: Jid });
+
+    if (!foundedjob) {
+      return res.status(404).json({ error: "job not found" });
+    }
+    foundedjob.isDeleted = true;
+    const savedApp = await foundedjob.save();
+    return res.status(200).json(savedApp);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// //admin job delete job
+// exports.removeJob = (req, res) => {
+//   const Jid = req.params.Jid;
+//   Job.findByIdAndDelete(Jid)
+//     .then(() => {
+//       res.status(200).json("job has been deleted");
+//     })
+//     .catch((err) => {
+//       res.status(401).json(err);
+//     });
+// };
