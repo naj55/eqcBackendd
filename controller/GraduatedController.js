@@ -162,18 +162,19 @@ exports.listJobs = (req, res) => {
 
 //applyJob
 exports.applyJob = (req, res) => {
-  const Jid = req.params.Jid;
-  const token = req.headers["authorization"]?.split(" ")[1];
+  const Jid = req.params.Jid; // Job ID
+  const token = req.headers["authorization"]?.split(" ")[1]; // Authorization Token
   const decoded = jwt.decode(token);
-  console.log(decoded);
-  const GId = decoded.oid;
+  const GId = decoded.oid; // Graduated ID from Token
 
   Graduated.findOne({ graduated: GId })
     .then((result) => {
-      const IdG = result._id;
-      Application.find({ GraduatedId: IdG })
+      const IdG = result._id; // Get Graduated ID from database
+      // Check if the user has already applied to this job
+      Application.findOne({ GraduatedId: IdG, Job: Jid })
         .then((applyedJob) => {
           if (!applyedJob) {
+            // If not applied, create a new application
             const newApplication = new Application({
               GraduatedId: IdG,
               Graduated: GId,
@@ -183,23 +184,27 @@ exports.applyJob = (req, res) => {
             newApplication
               .save()
               .then((result) => {
-                res.status(200).json(result);
+                res.status(200).json(result); // Successful application
               })
               .catch((err) => {
-                res.status(401).json(err);
+                res.status(500).json(err); // Error saving application
               });
           } else {
-            res.status(200).json("you already apply to this job");
+            // If already applied, send a response
+            res
+              .status(400)
+              .json({ message: "You have already applied to this job" });
           }
         })
         .catch((error) => {
-          res.status(401).json(error);
+          res.status(500).json(error); // Error checking previous applications
         });
     })
     .catch((err) => {
-      res.status(401).json(err);
+      res.status(500).json(err); // Error finding graduated user
     });
 };
+
 //list for all job that has been applyed
 exports.applyedJob = async (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
