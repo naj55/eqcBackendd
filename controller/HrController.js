@@ -75,41 +75,57 @@ exports.listJobs = (req, res) => {
     });
 };
 
-//admin job delete job
-exports.removeJob = (req, res) => {
-  const Jid = req.params.Jid;
-  Job.findByIdAndDelete(Jid)
-    .then(() => {
-      Application.deleteMany({ Job: Jid })
-        .then(() => {
-          console.log("job is deleted");
-        })
-        .catch((err) => {
-          res.status(401).json(err);
-        });
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
-};
+// //admin job delete job
+// exports.removeJob = (req, res) => {
+//   const Jid = req.params.Jid;
+//   Job.findByIdAndDelete(Jid)
+//     .then(() => {
+//       Application.deleteMany({ Job: Jid })
+//         .then(() => {
+//           console.log("job is deleted");
+//         })
+//         .catch((err) => {
+//           res.status(401).json(err);
+//         });
+//     })
+//     .catch((err) => {
+//       res.status(401).json(err);
+//     });
+// };
 
-//admin job delete job
-exports.softRemoveJob = (req, res) => {
-  const Jid = req.params.Jid;
-  Job.find(Jid)
-    .then((result) => {
-      result.isDeleted = true;
-      Application.find({ Job: Jid })
-        .then((res) => {
-          res.isDeleted = true;
-        })
-        .catch((err) => {
-          res.status(401).json(err);
-        });
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
+exports.removeJob = async (req, res) => {
+  try {
+    const Jid = req.params.Jid;
+    const foundedjob = await Job.findOne({ _id: Jid });
+
+    if (!foundedjob) {
+      return res.status(404).json({ error: "job not found" });
+    }
+
+    foundedjob.isDeleted = true;
+
+    // Use find instead of findMany
+    const application = await Application.find({ Job: Jid });
+
+    if (application.length === 0) {
+      return res.status(404).json({ error: "application not found" });
+    }
+
+    // Set isDeleted for each job
+    for (const one of application) {
+      one.isDeleted = true;
+      await one.save(); // Save each job individually
+    }
+
+    const savedjob = await foundedjob.save();
+
+    return res
+      .status(200)
+      .json({ savedjob, deletedJobsCount: application.length });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 //admin job update job

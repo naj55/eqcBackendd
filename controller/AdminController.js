@@ -199,30 +199,30 @@ exports.listCompanies = (req, res) => {
 };
 
 //admin company delete Company cascade
-exports.removeCompany0 = (req, res) => {
-  const Cid = req.params.Cid;
+// exports.removeCompany0 = (req, res) => {
+//   const Cid = req.params.Cid;
 
-  Company.findByIdAndDelete(Cid)
-    .then(() => {
-      Hr.deleteMany({ company: Cid })
-        .then((r) => {
-          Job.deleteMany({ company: Cid })
-            .then(() => {
-              console.log("job is deleted");
-            })
-            .catch((err) => {
-              res.status(401).json(err);
-            });
-        })
-        .catch((err) => {
-          res.status(401).json(err);
-        });
-      res.status(200).json("company deleted");
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
-};
+//   Company.findByIdAndDelete(Cid)
+//     .then(() => {
+//       Hr.deleteMany({ company: Cid })
+//         .then((r) => {
+//           Job.deleteMany({ company: Cid })
+//             .then(() => {
+//               console.log("job is deleted");
+//             })
+//             .catch((err) => {
+//               res.status(401).json(err);
+//             });
+//         })
+//         .catch((err) => {
+//           res.status(401).json(err);
+//         });
+//       res.status(200).json("company deleted");
+//     })
+//     .catch((err) => {
+//       res.status(401).json(err);
+//     });
+// };
 
 exports.removeCompany = async (req, res) => {
   try {
