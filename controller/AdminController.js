@@ -189,7 +189,7 @@ exports.postAddCompany = (req, res) => {
 //admin company List Company
 exports.listCompanies = (req, res) => {
   Company.find()
-    .populate("hr")
+    .populate("Hrs")
     .then((result) => {
       res.status(200).json(result);
     })
