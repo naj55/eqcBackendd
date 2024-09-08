@@ -44,12 +44,7 @@ router.patch(
 //admin Hr CRUD router
 router.post("/addHr", checkToken, checkAuthrization, AdminController.postAddHr);
 router.get("/listHr", checkToken, checkAuthrization, AdminController.listHr);
-router.delete(
-  "/removeHr/:Hid",
-  checkToken,
-  checkAuthrization,
-  AdminController.removeHr
-);
+router.delete("/removeHr/:Hid", checkToken, AdminController.removeHr);
 router.patch(
   "/editHr/:Hid",
   checkToken,
