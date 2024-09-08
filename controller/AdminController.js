@@ -44,6 +44,10 @@ exports.adminlogin = async (req, res) => {
     .then(async (result) => {
       const hashedPass = result.password;
       const compare = await bcrypt.compare(password, hashedPass);
+      if (!compare) {
+        return res.status(404).json({ error: "كلمة المرور غير صحيحة" });
+      }
+
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
           expiresIn: "1d",
@@ -175,6 +179,7 @@ exports.postAddCompany = (req, res) => {
     companyBusiness: companyBusinessInput,
     companySize: companySizeInput,
     companyAdded: companyAddedInput,
+    isDeleted: false,
   });
   newCompany
     .save()
@@ -188,7 +193,7 @@ exports.postAddCompany = (req, res) => {
 
 //admin company List Company
 exports.listCompanies = (req, res) => {
-  Company.find()
+  Company.find({ isDeleted: false })
     .populate("Hrs")
     .then((result) => {
       res.status(200).json(result);
@@ -341,6 +346,7 @@ exports.postAddHr = async (req, res) => {
     phone: phoneInput,
     password: hash,
     company: companyInput,
+    isDeleted: false,
   });
   newHr
     .save()
@@ -354,7 +360,7 @@ exports.postAddHr = async (req, res) => {
 
 //admin Hr List
 exports.listHr = (req, res) => {
-  Hr.find()
+  Hr.find({ isDeleted: false })
     .populate("company")
     .then((result) => {
       res.status(200).json(result);
@@ -495,7 +501,7 @@ exports.postAddJob = (req, res) => {
 
 //admin job List job
 exports.listJobs = (req, res) => {
-  Job.find()
+  Job.find({ isDeleted: false })
     .populate("company")
     .then((result) => {
       res.status(200).json(result);
@@ -508,7 +514,7 @@ exports.listJobs = (req, res) => {
 exports.availablelistJobs = (req, res) => {
   const today = new Date();
   const availableJobs = [];
-  Job.find()
+  Job.find({ isDeleted: false })
     .then((result) => {
       for (r of result) {
         if (today < r.edate) {
@@ -579,6 +585,7 @@ exports.postAddGraduated = (req, res) => {
     NId: NIdInput,
     password: passwordInput,
     major: majorInput,
+    isDeleted: false,
   });
   newGraduated
     .save()
@@ -593,7 +600,7 @@ exports.postAddGraduated = (req, res) => {
 //admin Graduated List
 //populate CV "MUST TO DO LATER"//////////////////////////////////////////////////////////////
 exports.listGraduated = (req, res) => {
-  Graduated.find()
+  Graduated.find({ isDeleted: false })
     .then((result) => {
       res.status(200).json(result);
     })
@@ -862,9 +869,27 @@ exports.removeJob = async (req, res) => {
     if (!foundedjob) {
       return res.status(404).json({ error: "job not found" });
     }
+
     foundedjob.isDeleted = true;
-    const savedApp = await foundedjob.save();
-    return res.status(200).json(savedApp);
+
+    // Use find instead of findMany
+    const application = await Application.find({ Job: Jid });
+
+    if (application.length === 0) {
+      return res.status(404).json({ error: "application not found" });
+    }
+
+    // Set isDeleted for each job
+    for (const one of application) {
+      one.isDeleted = true;
+      await one.save(); // Save each job individually
+    }
+
+    const savedjob = await foundedjob.save();
+
+    return res
+      .status(200)
+      .json({ savedjob, deletedJobsCount: application.length });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });

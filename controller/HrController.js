@@ -40,6 +40,7 @@ exports.postAddJob = (req, res) => {
     status: "wait",
     company: c,
     Hr: HrInput,
+    isDeleted: false,
   });
   newJob
     .save()
@@ -54,7 +55,7 @@ exports.postAddJob = (req, res) => {
 //hr job List job
 exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  Job.findOne({ Hr: HId })
+  Job.findOne({ Hr: HId, isDeleted: false })
     .then((result) => {
       res.status(200).json(result);
     })
@@ -66,7 +67,7 @@ exports.listJobs = (req, res) => {
 //hr active job List job
 exports.listJobs = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  Job.find({ Hr: HId })
+  Job.find({ Hr: HId, isDeleted: false })
     .then((result) => {
       res.status(200).json(result);
     })
@@ -193,7 +194,7 @@ exports.Hrlogin = async (req, res) => {
 // view listApplication of graduated
 exports.listJobApplication = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  Job.find({ Hr: HId })
+  Job.find({ Hr: HId, isDeleted: false })
     .then((jobs) => {
       // Check if any jobs were found
       if (jobs.length === 0) {
@@ -213,7 +214,7 @@ exports.listApplication = (req, res) => {
   const HId = res.locals.decoder.result._id;
   const Jid = req.params.jid;
 
-  Job.find({ Hr: HId, _id: Jid })
+  Job.find({ Hr: HId, _id: Jid, isDeleted: false })
     .then((jobs) => {
       // Check if any jobs were found
       if (jobs.length === 0) {
@@ -247,7 +248,7 @@ exports.listCandidate = async (req, res) => {
   try {
     const HId = res.locals.decoder.result._id;
 
-    const jobs = await Job.find({ Hr: HId });
+    const jobs = await Job.find({ Hr: HId, isDeleted: false });
     if (jobs.length === 0) {
       return res.status(404).json({ message: "No jobs found for this HR ID." });
     }

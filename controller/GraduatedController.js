@@ -144,7 +144,7 @@ exports.activeGraduatedLogin = (req, res) => {
 exports.listJobs = (req, res) => {
   const today = new Date();
   const availableJobs = [];
-  Job.find({ status: "accepted" })
+  Job.find({ status: "accepted", isDeleted: false })
     .populate("company")
     .then((result) => {
       for (r of result) {
@@ -180,6 +180,7 @@ exports.applyJob = (req, res) => {
               Graduated: GId,
               Job: Jid,
               status: "wait",
+              isDeleted: false,
             });
             newApplication
               .save()
@@ -210,7 +211,7 @@ exports.applyedJob = async (req, res) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   const decoded = jwt.decode(token);
   const GId = decoded.oid;
-  Application.find({ Graduated: GId })
+  Application.find({ Graduated: GId, isDeleted: false })
     .populate({
       path: "Job",
       select: "jobname",
