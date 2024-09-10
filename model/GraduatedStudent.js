@@ -13,7 +13,7 @@ const GraduatedSchema = new schema(
     graduated: {
       type: mongoose.Schema.Types.String,
     },
-    isDeleted: { type: Boolean, require: true },
+    isDeleted: { type: Boolean, require: true, default: false },
   },
 
   {

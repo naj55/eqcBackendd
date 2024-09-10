@@ -4,6 +4,10 @@ const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
 
+const fs = require("fs");
+const csv = require("csv-parser");
+const xlsx = require("xlsx");
+
 var nodemailer = require("nodemailer");
 
 ///MODELS
@@ -896,14 +900,36 @@ exports.removeJob = async (req, res) => {
   }
 };
 
-// //admin job delete job
-// exports.removeJob = (req, res) => {
-//   const Jid = req.params.Jid;
-//   Job.findByIdAndDelete(Jid)
-//     .then(() => {
-//       res.status(200).json("job has been deleted");
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
+exports.importFromCSV = (req, res) => {
+  const results = [];
+
+  fs.createReadStream(req.file.path) // Assuming you're using multer to handle file uploads
+    .pipe(csv())
+    .on("data", (data) => results.push(data))
+    .on("end", async () => {
+      try {
+        await Graduated.insertMany(results);
+        res
+          .status(200)
+          .json({ message: "Data imported successfully from CSV." });
+      } catch (error) {
+        res.status(500).json({ message: "Error importing data", error });
+      }
+    });
+};
+
+exports.importFromExcel = (req, res) => {
+  const workbook = xlsx.readFile(req.file.path); // Assuming you're using multer to handle file uploads
+  const sheetName = workbook.SheetNames[0];
+  const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+  Graduated.insertMany(data)
+    .then(() => {
+      res
+        .status(200)
+        .json({ message: "Data imported successfully from Excel." });
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "Error importing data", error });
+    });
+};

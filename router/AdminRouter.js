@@ -6,12 +6,15 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 
 //Admin Controller
 const AdminController = require("../controller/AdminController");
 //middeleware
 const checkToken = require("../middleware/checkToken");
 const checkAuthrization = require("../middleware/checkAuthrization");
+
+const upload = multer({ dest: "uploads/" });
 
 //admin company CRUD router
 //router.post("/addtheCompany", AdminController.postAddCompany);
@@ -143,4 +146,17 @@ router.patch("/rejectedJob/:JId", AdminController.rejectedJob);
 router.get("/acceptedGraduated", AdminController.acceptedGraduated);
 router.delete("/clearJob", AdminController.clearJob);
 
+// Route for CSV upload
+router.post(
+  "/uploadGraduatedCsv",
+  upload.single("file"),
+  AdminController.importFromCSV
+);
+
+// Route for Excel upload
+router.post(
+  "/uploadGraduatedExcel",
+  upload.single("file"),
+  AdminController.importFromExcel
+);
 module.exports = router;
