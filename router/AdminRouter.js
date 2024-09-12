@@ -23,12 +23,7 @@ router.post(
 
   AdminController.postAddCompany
 );
-router.get(
-  "/listCompanies",
-  checkToken,
-  checkAuthrization,
-  AdminController.listCompanies
-);
+router.get("/listCompanies", AdminController.listCompanies);
 
 router.delete(
   "/removeCompany/:Cid",

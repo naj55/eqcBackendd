@@ -197,7 +197,8 @@ exports.postAddCompany = (req, res) => {
 
 //admin company List Company
 exports.listCompanies = (req, res) => {
-  Company.find({ isDeleted: false })
+  // Company.find({ isDeleted: false });
+  Company.find()
     .populate("Hrs")
     .then((result) => {
       res.status(200).json(result);
@@ -336,30 +337,84 @@ exports.editC = (req, res) => {
 };
 //admin HR CRUD controller
 //admin HR add hr
-exports.postAddHr = async (req, res) => {
-  NameInput = req.body.name;
-  emailInput = req.body.email;
-  phoneInput = req.body.phone;
-  passwordInput = req.body.password;
-  const hash = await bcrypt.hash(passwordInput, salt);
-  companyInput = req.body.company;
+// exports.postAddHr = async (req, res) => {
+//   NameInput = req.body.name;
+//   emailInput = req.body.email;
+//   phoneInput = req.body.phone;
+//   // passwordInput = req.body.password;
+//   // const hash = await bcrypt.hash(passwordInput, salt);
+//   companyInput = req.body.company;
 
-  const newHr = new Hr({
-    name: NameInput,
-    email: emailInput,
-    phone: phoneInput,
-    password: hash,
-    company: companyInput,
-    isDeleted: false,
+//   const newHr = new Hr({
+//     name: NameInput,
+//     email: emailInput,
+//     phone: phoneInput,
+//     // password: hash,
+//     company: companyInput,
+//     isDeleted: false,
+//   });
+//   newHr
+//     .save()
+//     .then((result) => {
+
+//       res.status(200).json(result);
+//     })
+//     .catch((err) => {
+//       res.status(401).json(err);
+//     });
+// };
+
+exports.postAddHr = async (req, res) => {
+  console.log("this work");
+  const NameInput = req.body.name;
+  const emailInput = req.body.email;
+  const phoneInput = req.body.phone;
+  const companyInput = req.body.company;
+
+  // Generate a 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  console.log("this work1");
+  // Set up Nodemailer transport
+  const transporter = nodemailer.createTransport({
+    service: "gmail", // or your email service
+    auth: {
+      user: "aoleqc@gmail.com",
+      pass: "exse plzx hdjy tsrj",
+    },
   });
-  newHr
-    .save()
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      res.status(401).json(err);
+  console.log("this work2");
+  // Send OTP email
+  const mailOptions = {
+    from: "aoleqc@gmail.com",
+    to: emailInput,
+    subject: "Your OTP Code",
+    text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
+  };
+
+  try {
+    console.log("this work3");
+    await transporter.sendMail(mailOptions);
+
+    // Create a new HR record with OTP and expiration
+    const newHr = new Hr({
+      name: NameInput,
+      email: emailInput,
+      phone: phoneInput,
+      company: companyInput,
+      isDeleted: false,
+      otp: otp, // Store OTP temporarily if needed
+      otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
     });
+    console.log("this work4");
+    await newHr.save();
+
+    res
+      .status(200)
+      .json({ message: "HR added successfully, OTP sent to email." });
+  } catch (err) {
+    console.error(err); // طباعة الخطأ في وحدة التحكم
+    res.status(500).json({ message: "An error occurred.", error: err });
+  }
 };
 
 //admin Hr List

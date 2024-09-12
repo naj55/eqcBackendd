@@ -4,13 +4,14 @@ const uniqueValidatore = require("mongoose-unique-validator");
 
 const HrSchema = new schema(
   {
-    name: { type: String, require: true, unique: true },
+    name: { type: String, require: true },
     email: { type: String, unique: true },
     phone: { type: String, required: true, unique: true },
     password: {
       type: String,
       select: false,
     },
+
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
@@ -23,8 +24,15 @@ const HrSchema = new schema(
     ],
     resetCode: String,
     resetCodeExpiration: Date,
-    isDeleted: { type: Boolean, require: true },
+    isDeleted: { type: Boolean, require: true, default: false },
+    otp: {
+      type: String,
+    },
+    otpExpires: {
+      type: Date,
+    },
   },
+
   {
     timestamps: true,
   }

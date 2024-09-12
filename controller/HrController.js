@@ -12,6 +12,35 @@ const Graduated = require("../model/GraduatedStudent");
 const Application = require("../model/application");
 const Section = require("../model/Section");
 
+exports.verifyOtpAndChangePassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  try {
+    const hr = await Hr.findOne({ email });
+
+    if (!hr) {
+      return res.status(404).json({ message: "HR not found" });
+    }
+
+    // Check if OTP is valid and not expired
+    if (hr.otp !== otp || hr.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    // Hash the new password
+    const hash = await bcrypt.hash(newPassword, salt);
+
+    // Update password and clear OTP
+    hr.password = hash; // Set the new password
+    hr.otp = undefined; // Clear OTP
+    hr.otpExpires = undefined; // Clear OTP expiration
+
+    await hr.save();
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 //Hr jobs add job
 exports.postAddJob = (req, res) => {
   const D = res.locals.decoder;

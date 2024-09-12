@@ -17,8 +17,13 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 //Hr Login
 router.post("/hrlogin", HrController.Hrlogin);
+router.post(
+  "/verifyOtpAndChangePassword",
+  HrController.verifyOtpAndChangePassword
+);
+
 //Hr Job CRUD router
-router.post("/addJob", checkToken, HrController.postAddJob);
+http: router.post("/addJob", checkToken, HrController.postAddJob);
 router.get("/listJob", checkToken, HrController.listJobs);
 router.delete(
   "/removeJob/:Jid",

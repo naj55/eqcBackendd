@@ -17,7 +17,7 @@ const ApplicationSchema = new schema(
       ref: "Job",
     },
     status: { type: String, require: true },
-    isDeleted: { type: Boolean, require: true },
+    isDeleted: { type: Boolean, require: true, default: false },
   },
 
   {
