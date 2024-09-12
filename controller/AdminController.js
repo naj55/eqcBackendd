@@ -335,34 +335,6 @@ exports.editC = (req, res) => {
       res.status(401).json(err);
     });
 };
-//admin HR CRUD controller
-//admin HR add hr
-// exports.postAddHr = async (req, res) => {
-//   NameInput = req.body.name;
-//   emailInput = req.body.email;
-//   phoneInput = req.body.phone;
-//   // passwordInput = req.body.password;
-//   // const hash = await bcrypt.hash(passwordInput, salt);
-//   companyInput = req.body.company;
-
-//   const newHr = new Hr({
-//     name: NameInput,
-//     email: emailInput,
-//     phone: phoneInput,
-//     // password: hash,
-//     company: companyInput,
-//     isDeleted: false,
-//   });
-//   newHr
-//     .save()
-//     .then((result) => {
-
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
 
 exports.postAddHr = async (req, res) => {
   console.log("this work");
@@ -973,18 +945,46 @@ exports.importFromCSV = (req, res) => {
     });
 };
 
-exports.importFromExcel = (req, res) => {
-  const workbook = xlsx.readFile(req.file.path); // Assuming you're using multer to handle file uploads
+exports.importFromExcel = async (req, res) => {
+  console.log("ola");
+  const workbook = xlsx.readFile(req.file.path);
   const sheetName = workbook.SheetNames[0];
   const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  console.log("ggng");
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "aoleqc@gmail.com",
+      pass: "exse plzx hdjy tsrj",
+    },
+  });
 
-  Graduated.insertMany(data)
-    .then(() => {
-      res
-        .status(200)
-        .json({ message: "Data imported successfully from Excel." });
-    })
-    .catch((error) => {
-      res.status(500).json({ message: "Error importing data", error });
-    });
+  try {
+    for (const row of data) {
+      const email = row.email;
+      console.log(email);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // توليد OTP عشوائي
+
+      const mailOptions = {
+        from: "aoleqc@gmail.com",
+        to: email,
+        subject: "Your OTP Code",
+        text: `Your OTP code is: ${otp}. It is valid for 10 minutes.`,
+      };
+
+      await transporter.sendMail(mailOptions);
+      row.otp = otp;
+    }
+
+    await Graduated.insertMany(data);
+
+    res
+      .status(200)
+      .json({ message: "Data imported successfully from Excel and OTP sent." });
+    console.log("ggg");
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error importing data or sending OTP", error });
+  }
 };
