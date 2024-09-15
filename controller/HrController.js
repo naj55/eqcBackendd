@@ -335,8 +335,78 @@ exports.StateRejected = async (req, res) => {
     const mailOptions = {
       from: "aoleqc@gmail.com",
       to: Gemail,
-      subject: "Sending Email using Node.js",
-      text: "نعتذر منك لم يتم قبول طلبك للتقديم على الوظيفه",
+      subject: "رفض طلب التقديم على الوظيفة",
+      html: `
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>رفض الطلب</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    padding: 0;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .container {
+                    width: 100%;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #8079c5;
+                    padding: 20px;
+                    border-radius: 10px 10px 0 0;
+                    text-align: center;
+                    color: #fff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+                .content {
+                    padding: 20px;
+                }
+                .content p {
+                    font-size: 18px;
+                    color: #333;
+                }
+                .footer {
+                    background-color: #f5f5f5;
+                    padding: 10px;
+                    text-align: center;
+                    border-radius: 0 0 10px 10px;
+                    color: #8079c5;
+                    font-size: 14px;
+                }
+            </style>
+        </head>
+        <body>
+    
+            <div class="container">
+                <div class="header">
+                    <h1>مركز التأهيل الوظيفي</h1>
+                </div>
+                <div class="content">
+                    <p>نعتذر منك، لم يتم قبول طلبك للتقديم على الوظيفة.</p>
+                    <p>يرجى التواصل معنا في حال وجود أي استفسارات.</p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+    
+        </body>
+        </html>
+      `,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -387,8 +457,78 @@ exports.StateAccept = async (req, res) => {
     const mailOptions = {
       from: "aoleqc@gmail.com",
       to: Gemail,
-      subject: "Sending Email using Node.js",
-      text: "لقد تم قبول طلبك للتقديم على الوظيفه",
+      subject: "قبول طلب التقديم على الوظيفة",
+      html: `
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>قبول طلب التقديم على الوظيفة</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    padding: 0;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .container {
+                    width: 100%;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #8079c5;
+                    padding: 20px;
+                    border-radius: 10px 10px 0 0;
+                    text-align: center;
+                    color: #fff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+                .content {
+                    padding: 20px;
+                }
+                .content p {
+                    font-size: 18px;
+                    color: #333;
+                }
+                .footer {
+                    background-color: #f5f5f5;
+                    padding: 10px;
+                    text-align: center;
+                    border-radius: 0 0 10px 10px;
+                    color: #8079c5;
+                    font-size: 14px;
+                }
+            </style>
+        </head>
+        <body>
+    
+            <div class="container">
+                <div class="header">
+                    <h1>مركز التأهيل الوظيفي</h1>
+                </div>
+                <div class="content">
+                    <p>تهانينا! لقد تم قبول طلبك للتقديم على الوظيفة بنجاح.</p>
+                    <p>يرجى متابعة بريدك الإلكتروني للحصول على التفاصيل القادمة.</p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+    
+        </body>
+        </html>
+      `,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
@@ -507,8 +647,86 @@ exports.hrForgetPassLink = async (req, res) => {
     const mailOptions = {
       from: "aoleqc@gmail.com",
       to: email,
-      subject: "Password Reset Code",
-      text: `Your password reset code is: ${resetCode}`,
+      subject: "كود إعادة تعيين كلمة المرور",
+      html: `
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>إعادة تعيين كلمة المرور</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    padding: 0;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .container {
+                    width: 100%;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #8079c5;
+                    padding: 20px;
+                    border-radius: 10px 10px 0 0;
+                    text-align: center;
+                    color: #fff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+                .content {
+                    padding: 20px;
+                    text-align: center;
+                }
+                .content p {
+                    font-size: 18px;
+                    color: #333;
+                }
+                .reset-code {
+                    font-size: 22px;
+                    font-weight: bold;
+                    color: #8079c5;
+                    margin: 20px 0;
+                }
+                .footer {
+                    background-color: #f5f5f5;
+                    padding: 10px;
+                    text-align: center;
+                    border-radius: 0 0 10px 10px;
+                    color: #8079c5;
+                    font-size: 14px;
+                }
+            </style>
+        </head>
+        <body>
+    
+            <div class="container" dir="rtl">
+                <div class="header">
+                    <h1>طلب إعادة تعيين كلمة المرور</h1>
+                </div>
+                <div class="content">
+                    <p>كود إعادة تعيين كلمة المرور الخاص بك هو:</p>
+                    <div class="reset-code">${resetCode}</div>
+                    <p>يرجى استخدام هذا الكود لإعادة تعيين كلمة المرور. الكود صالح لمدة 1 ساعة.</p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+    
+        </body>
+        </html>
+      `,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {

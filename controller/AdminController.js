@@ -374,6 +374,7 @@ exports.postAddHr = async (req, res) => {
   // Generate a 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   console.log("this work1");
+
   // Set up Nodemailer transport
   const transporter = nodemailer.createTransport({
     service: "gmail", // or your email service
@@ -382,17 +383,109 @@ exports.postAddHr = async (req, res) => {
       pass: "exse plzx hdjy tsrj",
     },
   });
-  console.log("this work2");
   // Send OTP email
   const mailOptions = {
     from: "aoleqc@gmail.com",
     to: emailInput,
     subject: "Your OTP Code",
-    text: `Your OTP code is ${otp}. It is valid for 10 minutes.`,
+    html: `<!DOCTYPE html>
+  <html lang="ar">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>OTP Code</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+              margin: 0;
+              padding: 0;
+              direction: rtl;
+              text-align: right;
+          }
+          .container {
+              width: 100%;
+              padding: 20px;
+              background-color: #ffffff;
+              border-radius: 10px;
+              max-width: 600px;
+              margin: 20px auto;
+              box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+              background-color: #8079c5;
+              padding: 20px;
+              border-radius: 10px 10px 0 0;
+              text-align: center;
+              color: #fff;
+          }
+          .header h1 {
+              margin: 0;
+              font-size: 24px;
+          }
+          .content {
+              padding: 20px;
+          }
+          .content p {
+              font-size: 18px;
+              color: #333;
+          }
+          .otp {
+              font-size: 22px;
+              font-weight: bold;
+              color: #8079c5;
+              margin: 20px 0;
+              text-align: center;
+          }
+          .activation-button {
+              display: block;
+              width: 100%;
+              max-width: 200px;
+              margin: 20px auto;
+              padding: 10px;
+              background-color: #8079c5;
+              color: white;
+              text-align: center;
+              border-radius: 5px;
+              text-decoration: none;
+              font-size: 18px;
+          }
+          .footer {
+              background-color: #f5f5f5;
+              padding: 10px;
+              text-align: center;
+              border-radius: 0 0 10px 10px;
+              color: #8079c5;
+              font-size: 14px;
+          }
+      </style>
+  </head>
+  <body>
+  
+      <div class="container">
+          <div class="header">
+              <h1>مركز التأهيل الوظيفي</h1>
+          </div>
+          <div class="content">
+              <p>مرحباً،</p>
+              <p>شكراً لاستخدامك نظام مركز التأهيل الوظيفي. رمز OTP الخاص بك هو:</p>
+              <div class="otp">{{otp}}</div>
+              <p>يرجى استخدام هذا الرمز في غضون 3 ساعات. إذا لم تطلب رمز التحقق، يرجى تجاهل هذا البريد الإلكتروني.</p>
+              <!-- زر تفعيل الحساب -->
+              <p>لتفعيل الحساب الرجاء الزيارة:</p>
+              <a href="http://localhost:5173/auth/hr/activate-account" class="activation-button">تفعيل الحساب</a>
+          </div>
+          <div class="footer">
+              <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+          </div>
+      </div>
+  
+  </body>
+  </html>
+  `,
   };
 
   try {
-    console.log("this work3");
     await transporter.sendMail(mailOptions);
 
     // Create a new HR record with OTP and expiration
@@ -405,15 +498,17 @@ exports.postAddHr = async (req, res) => {
       otp: otp, // Store OTP temporarily if needed
       otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
     });
-    console.log("this work4");
     await newHr.save();
 
-    res
-      .status(200)
-      .json({ message: "HR added successfully, OTP sent to email." });
+    console.log("OTP sent to email:", emailInput);
+
+    res.status(200).json({ message: "تم اضافة الموظف بنجاح" });
   } catch (err) {
     console.error(err); // طباعة الخطأ في وحدة التحكم
-    res.status(500).json({ message: "An error occurred.", error: err });
+    if (err.code === "11000") {
+      return res.status(400).json({ message: "ايميل المستخدم موجود بالفعل" });
+    }
+    res.status(500).json({ message: "خطاء في السيرفر", error: err });
   }
 };
 
@@ -828,8 +923,79 @@ exports.accebtedJob = (req, res) => {
           var mailOptions = {
             from: "aoleqc@gmail.com",
             to: HrEmail,
-            subject: "Sending Email using Node.js",
-            text: "لقد تم قبول الوظيفة و اضافتها للنظام",
+            subject: "قبول الوظيفة وإضافتها للنظام",
+            html: `
+              <!DOCTYPE html>
+              <html lang="ar">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>قبول الوظيفة</title>
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          background-color: #f5f5f5;
+                          margin: 0;
+                          padding: 0;
+                          direction: rtl;
+                          text-align: right;
+                      }
+                      .container {
+                          width: 100%;
+                          padding: 20px;
+                          background-color: #ffffff;
+                          border-radius: 10px;
+                          max-width: 600px;
+                          margin: 20px auto;
+                          box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                      }
+                      .header {
+                          background-color: #8079c5;
+                          padding: 20px;
+                          border-radius: 10px 10px 0 0;
+                          text-align: center;
+                          color: #fff;
+                      }
+                      .header h1 {
+                          margin: 0;
+                          font-size: 24px;
+                      }
+                      .content {
+                          padding: 20px;
+                      }
+                      .content p {
+                          font-size: 18px;
+                          color: #333;
+                      }
+                      .footer {
+                          background-color: #f5f5f5;
+                          padding: 10px;
+                          text-align: center;
+                          border-radius: 0 0 10px 10px;
+                          color: #8079c5;
+                          font-size: 14px;
+                      }
+                  </style>
+              </head>
+              <body>
+          
+                  <div class="container">
+                      <div class="header">
+                          <h1>مركز التأهيل الوظيفي</h1>
+                      </div>
+                      <div class="content">
+                          <p>مرحباً،</p>
+                          <p>تمت الموافقة على الوظيفة الجديدة وتمت إضافتها بنجاح إلى النظام.</p>
+                          <p>يرجى مراجعة النظام للتأكد من التفاصيل.</p>
+                      </div>
+                      <div class="footer">
+                          <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                      </div>
+                  </div>
+          
+              </body>
+              </html>
+            `,
           };
 
           transporter.sendMail(mailOptions, function (error, info) {
@@ -871,9 +1037,80 @@ exports.rejectedJob = (req, res) => {
           var mailOptions = {
             from: "aoleqc@gmail.com",
             to: HrEmail,
-            subject: "Sending Email using Node.js",
-            text: "نعتذر منك لم يتم قبول الوظيفه",
+            subject: "إشعار رفض الوظيفة",
+            html: `
+              <!DOCTYPE html>
+              <html lang="ar">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>إشعار رفض الوظيفة</title>
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          background-color: #f5f5f5;
+                          margin: 0;
+                          padding: 0;
+                          direction: rtl;
+                          text-align: right;
+                      }
+                      .container {
+                          width: 100%;
+                          padding: 20px;
+                          background-color: #ffffff;
+                          border-radius: 10px;
+                          max-width: 600px;
+                          margin: 20px auto;
+                          box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                      }
+                      .header {
+                          background-color: #8079c5;
+                          padding: 20px;
+                          border-radius: 10px 10px 0 0;
+                          text-align: center;
+                          color: #fff;
+                      }
+                      .header h1 {
+                          margin: 0;
+                          font-size: 24px;
+                      }
+                      .content {
+                          padding: 20px;
+                      }
+                      .content p {
+                          font-size: 18px;
+                          color: #333;
+                      }
+                      .footer {
+                          background-color: #f5f5f5;
+                          padding: 10px;
+                          text-align: center;
+                          border-radius: 0 0 10px 10px;
+                          color: #8079c5;
+                          font-size: 14px;
+                      }
+                  </style>
+              </head>
+              <body>
+          
+                  <div class="container">
+                      <div class="header">
+                          <h1>مركز التأهيل الوظيفي</h1>
+                      </div>
+                      <div class="content">
+                          <p>نعتذر منك، لم يتم قبول الوظيفة.</p>
+                          <p>يرجى التواصل مع قسم الموارد البشرية للمزيد من التفاصيل.</p>
+                      </div>
+                      <div class="footer">
+                          <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                      </div>
+                  </div>
+          
+              </body>
+              </html>
+            `,
           };
+
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
               console.log(error);
@@ -964,11 +1201,9 @@ exports.importFromCSV = (req, res) => {
     .on("end", async () => {
       try {
         await Graduated.insertMany(results);
-        res
-          .status(200)
-          .json({ message: "Data imported successfully from CSV." });
+        res.status(200).json({ message: "تم رفع البيانات بنجاح" });
       } catch (error) {
-        res.status(500).json({ message: "Error importing data", error });
+        res.status(500).json({ message: "خطأ في رفع البيانات", error });
       }
     });
 };
@@ -980,11 +1215,9 @@ exports.importFromExcel = (req, res) => {
 
   Graduated.insertMany(data)
     .then(() => {
-      res
-        .status(200)
-        .json({ message: "Data imported successfully from Excel." });
+      res.status(200).json({ message: "تم رفع البيانات بنجاح" });
     })
     .catch((error) => {
-      res.status(500).json({ message: "Error importing data", error });
+      res.status(500).json({ message: "خطأ في رفع البيانات", error });
     });
 };
