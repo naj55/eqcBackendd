@@ -335,34 +335,6 @@ exports.editC = (req, res) => {
       res.status(401).json(err);
     });
 };
-//admin HR CRUD controller
-//admin HR add hr
-// exports.postAddHr = async (req, res) => {
-//   NameInput = req.body.name;
-//   emailInput = req.body.email;
-//   phoneInput = req.body.phone;
-//   // passwordInput = req.body.password;
-//   // const hash = await bcrypt.hash(passwordInput, salt);
-//   companyInput = req.body.company;
-
-//   const newHr = new Hr({
-//     name: NameInput,
-//     email: emailInput,
-//     phone: phoneInput,
-//     // password: hash,
-//     company: companyInput,
-//     isDeleted: false,
-//   });
-//   newHr
-//     .save()
-//     .then((result) => {
-
-//       res.status(200).json(result);
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
 
 exports.postAddHr = async (req, res) => {
   console.log("this work");
@@ -1208,16 +1180,148 @@ exports.importFromCSV = (req, res) => {
     });
 };
 
-exports.importFromExcel = (req, res) => {
-  const workbook = xlsx.readFile(req.file.path); // Assuming you're using multer to handle file uploads
+exports.importFromExcel = async (req, res) => {
+  console.log("ola");
+  const workbook = xlsx.readFile(req.file.path);
   const sheetName = workbook.SheetNames[0];
   const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  console.log("ggng");
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "aoleqc@gmail.com",
+      pass: "exse plzx hdjy tsrj",
+    },
+  });
 
-  Graduated.insertMany(data)
-    .then(() => {
-      res.status(200).json({ message: "تم رفع البيانات بنجاح" });
-    })
-    .catch((error) => {
-      res.status(500).json({ message: "خطأ في رفع البيانات", error });
-    });
+  try {
+    for (const row of data) {
+      const email = row.email;
+      console.log(email);
+      const otp = Math.floor(100000 + Math.random() * 900000).toString(); // توليد OTP عشوائي
+
+      const mailOptions = {
+        from: "aoleqc@gmail.com",
+        to: emailInput,
+        subject: "رمز التحقق OTP الخاص بك",
+        html: `
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>رمز التحقق OTP</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f8f9fa;
+                    margin: 0;
+                    padding: 0;
+                    direction: rtl;
+                    text-align: right;
+                    color: #343a40;
+                }
+                .container {
+                    width: 100%;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    margin: 30px auto;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #4e73df;
+                    padding: 25px;
+                    border-radius: 10px 10px 0 0;
+                    text-align: center;
+                    color: #ffffff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 26px;
+                    letter-spacing: 1px;
+                }
+                .content {
+                    padding: 30px;
+                    line-height: 1.8;
+                }
+                .content p {
+                    font-size: 18px;
+                    margin: 10px 0;
+                }
+                .otp {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #4e73df;
+                    margin: 20px 0;
+                    text-align: center;
+                    background-color: #f0f4fa;
+                    padding: 10px;
+                    border-radius: 5px;
+                }
+                .activation-button {
+                    display: inline-block;
+                    margin-top: 20px;
+                    padding: 15px 25px;
+                    background-color: #4e73df;
+                    color: #ffffff;
+                    text-align: center;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    font-size: 18px;
+                    transition: background-color 0.3s ease;
+                }
+                .activation-button:hover {
+                    background-color: #2e59d9;
+                }
+                .footer {
+                    background-color: #f8f9fa;
+                    padding: 20px;
+                    text-align: center;
+                    border-radius: 0 0 10px 10px;
+                    color: #6c757d;
+                    font-size: 14px;
+                }
+            </style>
+        </head>
+        <body>
+        
+            <div class="container">
+                <div class="header">
+                    <h1>مركز التأهيل الوظيفي</h1>
+                </div>
+                <div class="content">
+                    <p>مرحباً،</p>
+                    <p>شكراً لك على استخدامك نظام مركز التأهيل الوظيفي. رمز التحقق OTP الخاص بك هو:</p>
+                    <div class="otp">{{otp}}</div>
+                    <p>يرجى استخدام هذا الرمز خلال 3 ساعات من استلامه لضمان حماية حسابك. إذا لم تطلب رمز التحقق، يُرجى تجاهل هذا البريد الإلكتروني.</p>
+                    <p>لتفعيل حسابك، يرجى الضغط على الرابط أدناه:</p>
+                    <a href="http://localhost:5173/auth/graduated/register" class="activation-button">تفعيل الحساب</a>
+                </div>
+                <div class="footer">
+                    <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+        
+        </body>
+        </html>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+      row.otp = otp;
+    }
+
+    await Graduated.insertMany(data);
+
+    res
+      .status(200)
+      .json({ message: "تم رفع البيانات بنجاح" });
+    console.log("ggg");
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "حدث خطأ", error });
+  }
 };
