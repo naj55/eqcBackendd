@@ -54,4 +54,9 @@ router.post(
 );
 router.get("/isHaveCv", GraduatedController.isHaveCv);
 
+router.post("/insert", GraduatedController.insertGraduated);
+
+router.delete("/deleteGraduated/:id", GraduatedController.deleteGraduated);
+router.get("/getAll", GraduatedController.getAll);
+
 module.exports = router;

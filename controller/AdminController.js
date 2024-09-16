@@ -1202,7 +1202,7 @@ exports.importFromExcel = async (req, res) => {
 
       const mailOptions = {
         from: "aoleqc@gmail.com",
-        to: emailInput,
+        to: email,
         subject: "رمز التحقق OTP الخاص بك",
         html: `
         <!DOCTYPE html>
@@ -1294,10 +1294,10 @@ exports.importFromExcel = async (req, res) => {
                 <div class="content">
                     <p>مرحباً،</p>
                     <p>شكراً لك على استخدامك نظام مركز التأهيل الوظيفي. رمز التحقق OTP الخاص بك هو:</p>
-                    <div class="otp">{{otp}}</div>
+                    <div class="otp">${otp}</div>
                     <p>يرجى استخدام هذا الرمز خلال 3 ساعات من استلامه لضمان حماية حسابك. إذا لم تطلب رمز التحقق، يُرجى تجاهل هذا البريد الإلكتروني.</p>
                     <p>لتفعيل حسابك، يرجى الضغط على الرابط أدناه:</p>
-                    <a href="http://localhost:5173/auth/graduated/register" class="activation-button">تفعيل الحساب</a>
+                    <a href="http://localhost:5173/auth/graduated/activate-account" class="activation-button">تفعيل الحساب</a>
                 </div>
                 <div class="footer">
                     <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
@@ -1313,7 +1313,6 @@ exports.importFromExcel = async (req, res) => {
       row.otp = otp;
       row.otpExpires = Date.now() + 3 * 60 * 60 * 1000; // تخزين وقت انتهاء صلاحية OTP
     }
-
     await Graduated.insertMany(data);
 
     res.status(200).json({ message: "تم رفع البيانات بنجاح" });

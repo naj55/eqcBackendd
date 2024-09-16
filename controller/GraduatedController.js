@@ -87,11 +87,29 @@ exports.updateGraduated = async (req, res) => {
   }
 };
 
+exports.deleteGraduated = async (req, res) => {
+  const id = req.params.id;
+
+  const deletedGraduated = await Graduated.findByIdAndDelete(id);
+
+  if (!deletedGraduated) {
+    return res.status(404).json({ error: "Graduated not found" });
+  }
+
+  res.status(200).json(deletedGraduated);
+};
+exports.getAll = async (req, res) => {
+  const graduated = await Graduated.find();
+  res.status(200).json(graduated);
+};
 exports.verifyOtpAndChangePassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
+  console.log(email, otp, newPassword);
+
   try {
     const graduated = await Graduated.findOne({ email });
+    console.log(graduated);
 
     if (!graduated) {
       return res.status(404).json({ message: "graduated not found" });
@@ -99,7 +117,7 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
 
     // Check if OTP is valid and not expired
     if (graduated.otp !== otp || graduated.otpExpires < Date.now()) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
+      return res.status(400).json({ message: "خطاء في الرمز السري" });
     }
 
     // Hash the new password
@@ -111,7 +129,7 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
     graduated.otpExpires = undefined; // Clear OTP expiration
 
     await graduated.save();
-    res.status(200).json({ message: "Password changed successfully" });
+    res.status(200).json({ message: "تم تغيير كلمة المرور بنجاح" });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -126,12 +144,32 @@ exports.GraduatedLogin = (req, res) => {
     .then(async (result) => {
       const hashedPass = result.password;
       const compare = await bcrypt.compare(password, hashedPass);
+      if (!compare) {
+        return res
+          .status(401)
+          .json({ message: "خطاء في البريد الالكتروني او كلمة المرور" });
+      }
       if (compare) {
         const token = jwt.sign({ result }, process.env.secret, {
           expiresIn: "1d",
         });
         res.json({ token: token });
       } ///end if
+    })
+    .catch((err) => {
+      res.status(401).json(err);
+    });
+};
+
+exports.insertGraduated = (req, res) => {
+  const data = req.body;
+
+  const newGraduated = new Graduated(data);
+
+  newGraduated
+    .save()
+    .then((result) => {
+      res.status(200).json(result);
     })
     .catch((err) => {
       res.status(401).json(err);
