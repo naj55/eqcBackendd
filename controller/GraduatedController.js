@@ -87,6 +87,36 @@ exports.updateGraduated = async (req, res) => {
   }
 };
 
+exports.verifyOtpAndChangePassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+
+  try {
+    const graduated = await Graduated.findOne({ email });
+
+    if (!graduated) {
+      return res.status(404).json({ message: "graduated not found" });
+    }
+
+    // Check if OTP is valid and not expired
+    if (graduated.otp !== otp || graduated.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    // Hash the new password
+    const hash = await bcrypt.hash(newPassword, salt);
+
+    // Update password and clear OTP
+    graduated.password = hash; // Set the new password
+    graduated.otp = undefined; // Clear OTP
+    graduated.otpExpires = undefined; // Clear OTP expiration
+
+    await graduated.save();
+    res.status(200).json({ message: "Password changed successfully" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 // GraduatedLogin
 exports.GraduatedLogin = (req, res) => {
   const email = req.body.email;
@@ -650,4 +680,82 @@ exports.isHaveCv = (req, res) => {
     .catch((err) => {
       res.status(401).json(err);
     });
+};
+
+// إرسال رمز إعادة تعيين كلمة المرور
+exports.graduatedForgetPassLink = async (req, res) => {
+  const email = req.body.email;
+
+  try {
+    const graduated = await Graduated.findOne({ email });
+    if (!graduated) {
+      return res.status(404).send("graduated not found.");
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString(); // Random 6-digit code
+    graduated.resetCode = resetCode;
+    graduated.resetCodeExpiration = Date.now() + 3600000; // 1 hour
+
+    await graduated.save();
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "aoleqc@gmail.com",
+        pass: "exse plzx hdjy tsrj", // Consider using environment variables for sensitive information
+      },
+    });
+
+    const mailOptions = {
+      from: "aoleqc@gmail.com",
+      to: email,
+      subject: "Password Reset Code",
+      text: `Your password reset code is: ${resetCode}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).send("Error sending email.");
+      } else {
+        return res.send("Password reset code sent to your email.");
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error.");
+  }
+};
+
+exports.graduatedResetPassword = async (req, res) => {
+  const email = req.body.email;
+  const resetCode = req.body.resetCode;
+  const newPassword = req.body.newPassword;
+
+  try {
+    const graduated = await Graduated.findOne({ email });
+    if (!hr) {
+      return res.status(404).send("الحساب غير موجود");
+    }
+
+    // Check if the reset code is valid and not expired
+    if (
+      graduated.resetCode !== resetCode ||
+      graduated.resetCodeExpiration < Date.now()
+    ) {
+      return res
+        .status(400)
+        .json({ message: "رمز التحقق غير صالح او منتهي الصلاحية" });
+    }
+
+    // Update the password (add your password hashing logic here)
+    const bcrypt = require("bcrypt");
+    graduated.password = await bcrypt.hash(newPassword, 10);
+    graduated.resetCode = undefined; // Clear the reset code
+    graduated.resetCodeExpiration = undefined; // Clear the expiration
+
+    await graduated.save();
+    return res.json({ message: "كلمة المرور تم تغييرها بنجاح" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "خطأ في عملية تغيير كلمة المرور" });
+  }
 };

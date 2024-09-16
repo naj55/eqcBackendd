@@ -48,7 +48,10 @@ router.get("/getLanguage", GraduatedController.getLanguage);
 router.get("/getAboutMe", GraduatedController.getAboutMe);
 router.get("/getAboutMe", GraduatedController.getAboutMe);
 router.get("/activeGraduatedLogin", GraduatedController.activeGraduatedLogin);
-
-router.get("/isHaveCv", GraduatedController.isHaveCv)
+router.post(
+  "/verifyOtpAndChangePassword",
+  GraduatedController.verifyOtpAndChangePassword
+);
+router.get("/isHaveCv", GraduatedController.isHaveCv);
 
 module.exports = router;

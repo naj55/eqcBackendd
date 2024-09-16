@@ -14,6 +14,12 @@ const GraduatedSchema = new schema(
       type: mongoose.Schema.Types.String,
     },
     isDeleted: { type: Boolean, require: true, default: false },
+    otp: {
+      type: String,
+    },
+    otpExpires: {
+      type: Date,
+    },
   },
 
   {

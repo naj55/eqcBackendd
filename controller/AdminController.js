@@ -248,9 +248,9 @@ exports.removeCompany = async (req, res) => {
     // Use find instead of findMany
     const HrJobs = await Job.find({ Hr: Hid });
 
-    if (HrJobs.length === 0) {
-      return res.status(404).json({ error: "Jobs not found" });
-    }
+    // if (HrJobs.length === 0) {
+    //   return res.status(404).json({ error: "Jobs not found" });
+    // }
 
     // Set isDeleted for each job
     for (const job of HrJobs) {
@@ -375,7 +375,7 @@ exports.postAddHr = async (req, res) => {
       company: companyInput,
       isDeleted: false,
       otp: otp, // Store OTP temporarily if needed
-      otpExpires: Date.now() + 10 * 60 * 1000, // OTP valid for 10 minutes
+      otpExpires: Date.now() + 3 * 60 * 60 * 1000, // OTP valid for 3 hours
     });
     console.log("this work4");
     await newHr.save();
@@ -415,9 +415,9 @@ exports.removeHr = async (req, res) => {
     // Use find instead of findMany
     const HrJobs = await Job.find({ Hr: Hid });
 
-    if (HrJobs.length === 0) {
-      return res.status(404).json({ error: "Jobs not found" });
-    }
+    // if (HrJobs.length === 0) {
+    //   return res.status(404).json({ error: "Jobs not found" });
+    // }
 
     // Set isDeleted for each job
     for (const job of HrJobs) {
@@ -969,11 +969,12 @@ exports.importFromExcel = async (req, res) => {
         from: "aoleqc@gmail.com",
         to: email,
         subject: "Your OTP Code",
-        text: `Your OTP code is: ${otp}. It is valid for 10 minutes.`,
+        text: `Your OTP code is: ${otp}. It is valid for 3 hours.`,
       };
 
       await transporter.sendMail(mailOptions);
       row.otp = otp;
+      row.otpExpires = Date.now() + 3 * 60 * 60 * 1000; // تخزين وقت انتهاء صلاحية OTP
     }
 
     await Graduated.insertMany(data);
