@@ -7,23 +7,27 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
+const colors = require("colors"); // تأكد من تثبيت مكتبة colors إذا لم تكن مثبتة
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//connect to DB
-mongoose
-  .connect(process.env.db_url)
-  .then(() => {
-    console.log("db working");
-  })
-  .catch(() => {
-    console.log("db not working");
-  });
-
+// //connect to DB
+const connectDB = async () => {
+  try {
+    // خيارات الاتصال بقاعدة البيانات
+    const conn = await mongoose.connect(process.env.db_url);
+    console.log(`✅ MongoDB Connected: ${conn.connection.name}`.green.bold);
+  } catch (err) {
+    console.error(`❌ Error: ${err.message}`.red.bold);
+    // إنهاء العملية مع فشل
+    process.exit(1);
+  }
+};
 //test the server
+connectDB();
 app.get("/", (req, res) => {
   res.send("hello world from najla server");
 });
@@ -39,5 +43,7 @@ app.use("/graduated", GraduatedRoute);
 
 //server
 app.listen(8000, () => {
-  console.log(`server is running on port 8000 in http://localhost:8000`);
+  console.log(`💡 server is running on port 8000`.white.bold);
+  console.log("🧿 http://localhost:8000".blue.bold);
+  console.log("🚀 Ready to go!".yellow.bold);
 });
