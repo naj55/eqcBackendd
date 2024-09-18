@@ -58,5 +58,5 @@ router.post("/insert", GraduatedController.insertGraduated);
 
 router.delete("/deleteGraduated/:id", GraduatedController.deleteGraduated);
 router.get("/getAll", GraduatedController.getAll);
-
+router.post("/login", GraduatedController.GraduatedLogin);
 module.exports = router;

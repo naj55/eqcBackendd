@@ -103,13 +103,17 @@ exports.getAll = async (req, res) => {
   res.status(200).json(graduated);
 };
 exports.verifyOtpAndChangePassword = async (req, res) => {
-  const { email, otp, newPassword } = req.body;
+  const email = req.body.email;
+  const otp = req.body.otp;
+  const newPassword = req.body.newPassword;
 
-  console.log(email, otp, newPassword);
+  console.log("the email is", email);
+  console.log("the otp", otp);
+  console.log("the newPassword", newPassword);
 
   try {
-    const graduated = await Graduated.findOne({ email });
-    console.log(graduated);
+    const graduated = await Graduated.findOne({ email: email });
+    console.log("graduated", graduated);
 
     if (!graduated) {
       return res.status(404).json({ message: "graduated not found" });
@@ -125,6 +129,7 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
 
     // Update password and clear OTP
     graduated.password = hash; // Set the new password
+    console.log("password hashed", graduated.password);
     graduated.otp = undefined; // Clear OTP
     graduated.otpExpires = undefined; // Clear OTP expiration
 
@@ -139,6 +144,8 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
 exports.GraduatedLogin = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  console.log(password);
+  console.log(email);
   Graduated.findOne({ email: email })
     .select("+password")
     .then(async (result) => {
