@@ -1011,76 +1011,80 @@ exports.rejectedJob = (req, res) => {
             to: HrEmail,
             subject: "إشعار رفض الوظيفة",
             html: `
-              <!DOCTYPE html>
-              <html lang="ar">
-              <head>
-                  <meta charset="UTF-8">
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>إشعار رفض الوظيفة</title>
-                  <style>
-                      body {
-                          font-family: Arial, sans-serif;
-                          background-color: #f5f5f5;
-                          margin: 0;
-                          padding: 0;
-                          direction: rtl;
-                          text-align: right;
-                      }
-                      .container {
-                          width: 100%;
-                          padding: 20px;
-                          background-color: #ffffff;
-                          border-radius: 10px;
-                          max-width: 600px;
-                          margin: 20px auto;
-                          box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-                      }
-                      .header {
-                          background-color: #8079c5;
-                          padding: 20px;
-                          border-radius: 10px 10px 0 0;
-                          text-align: center;
-                          color: #fff;
-                      }
-                      .header h1 {
-                          margin: 0;
-                          font-size: 24px;
-                      }
-                      .content {
-                          padding: 20px;
-                      }
-                      .content p {
-                          font-size: 18px;
-                          color: #333;
-                      }
-                      .footer {
-                          background-color: #f5f5f5;
-                          padding: 10px;
-                          text-align: center;
-                          border-radius: 0 0 10px 10px;
-                          color: #8079c5;
-                          font-size: 14px;
-                      }
-                  </style>
-              </head>
-              <body>
-          
-                  <div class="container">
-                      <div class="header">
-                          <h1>مركز التأهيل الوظيفي</h1>
-                      </div>
-                      <div class="content">
-                          <p>نعتذر منك، لم يتم قبول الوظيفة.</p>
-                          <p>يرجى التواصل مع قسم الموارد البشرية للمزيد من التفاصيل.</p>
-                      </div>
-                      <div class="footer">
-                          <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
-                      </div>
-                  </div>
-          
-              </body>
-              </html>
-            `,
+  <!DOCTYPE html>
+  <html lang="ar">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>إشعار رفض الوظيفة</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f5f5f5;
+              margin: 0;
+              padding: 0;
+              direction: rtl;
+              text-align: right;
+          }
+          .container {
+              width: 100%;
+              padding: 20px;
+              background-color: #ffffff;
+              border-radius: 10px;
+              max-width: 600px;
+              margin: 20px auto;
+              box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+              background-color: #162c51;
+              padding: 20px;
+              border-radius: 10px 10px 0 0;
+              text-align: center;
+              color: #fff;
+          }
+          .header h1 {
+              margin: 0;
+              font-size: 24px;
+          }
+          .content {
+              padding: 20px;
+          }
+          .content p {
+              font-size: 18px;
+              color: #333;
+              margin: 0 0 15px;
+          }
+          .content p:last-child {
+              margin-bottom: 0;
+          }
+          .footer {
+              background-color: #f5f5f5;
+              padding: 10px;
+              text-align: center;
+              border-radius: 0 0 10px 10px;
+              color: #162c51;
+              font-size: 14px;
+          }
+      </style>
+  </head>
+  <body>
+
+      <div class="container">
+          <div class="header">
+              <h1>مركز التأهيل الوظيفي</h1>
+          </div>
+          <div class="content">
+              <p>نعتذر منك، لم يتم قبول الوظيفة.</p>
+              <p>يرجى التواصل مع قسم الموارد البشرية للمزيد من التفاصيل.</p>
+          </div>
+          <div class="footer">
+              <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+          </div>
+      </div>
+
+  </body>
+  </html>
+`,
           };
 
           transporter.sendMail(mailOptions, function (error, info) {
@@ -1231,7 +1235,7 @@ exports.importFromExcel = async (req, res) => {
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 }
                 .header {
-                    background-color: #4e73df;
+                    background-color: #162c51;
                     padding: 25px;
                     border-radius: 10px 10px 0 0;
                     text-align: center;
@@ -1253,7 +1257,7 @@ exports.importFromExcel = async (req, res) => {
                 .otp {
                     font-size: 24px;
                     font-weight: bold;
-                    color: #4e73df;
+                    color: #162c51;
                     margin: 20px 0;
                     text-align: center;
                     background-color: #f0f4fa;
@@ -1264,7 +1268,7 @@ exports.importFromExcel = async (req, res) => {
                     display: inline-block;
                     margin-top: 20px;
                     padding: 15px 25px;
-                    background-color: #4e73df;
+                    background-color: #162c51;
                     color: #ffffff;
                     text-align: center;
                     border-radius: 5px;

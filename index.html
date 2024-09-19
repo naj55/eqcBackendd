@@ -1,10 +1,9 @@
-const mailOptions = { from: "aoleqc@gmail.com", to: emailInput, subject: "Your
-OTP Code", html: `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OTP Code</title>
+    <title>قبول طلب التقديم على الوظيفة</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -24,7 +23,7 @@ OTP Code", html: `<!DOCTYPE html>
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
       }
       .header {
-        background-color: #8079c5;
+        background-color: #162c51;
         padding: 20px;
         border-radius: 10px 10px 0 0;
         text-align: center;
@@ -41,32 +40,12 @@ OTP Code", html: `<!DOCTYPE html>
         font-size: 18px;
         color: #333;
       }
-      .otp {
-        font-size: 22px;
-        font-weight: bold;
-        color: #8079c5;
-        margin: 20px 0;
-        text-align: center;
-      }
-      .activation-button {
-        display: block;
-        width: 100%;
-        max-width: 200px;
-        margin: 20px auto;
-        padding: 10px;
-        background-color: #8079c5;
-        color: white;
-        text-align: center;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 18px;
-      }
       .footer {
         background-color: #f5f5f5;
         padding: 10px;
         text-align: center;
         border-radius: 0 0 10px 10px;
-        color: #8079c5;
+        color: #162c51;
         font-size: 14px;
       }
     </style>
@@ -77,20 +56,8 @@ OTP Code", html: `<!DOCTYPE html>
         <h1>مركز التأهيل الوظيفي</h1>
       </div>
       <div class="content">
-        <p>مرحباً،</p>
-        <p>شكراً لاستخدامك نظام مركز التأهيل الوظيفي. رمز OTP الخاص بك هو:</p>
-        <div class="otp">{{otp}}</div>
-        <p>
-          يرجى استخدام هذا الرمز في غضون 3 ساعات. إذا لم تطلب رمز التحقق، يرجى
-          تجاهل هذا البريد الإلكتروني.
-        </p>
-        <!-- زر تفعيل الحساب -->
-        <p>لتفعيل الحساب الرجاء الزيارة:</p>
-        <a
-          href="http://localhost:5173/auth/hr/activate-account"
-          class="activation-button"
-          >تفعيل الحساب</a
-        >
+        <p>تهانينا! لقد تم قبول طلبك للتقديم على الوظيفة بنجاح.</p>
+        <p>يرجى متابعة بريدك الإلكتروني للحصول على التفاصيل القادمة.</p>
       </div>
       <div class="footer">
         <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
@@ -98,4 +65,3 @@ OTP Code", html: `<!DOCTYPE html>
     </div>
   </body>
 </html>
-`, };

@@ -362,7 +362,7 @@ exports.StateRejected = async (req, res) => {
                     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
                 }
                 .header {
-                    background-color: #8079c5;
+                    background-color: #162c51;
                     padding: 20px;
                     border-radius: 10px 10px 0 0;
                     text-align: center;
@@ -384,7 +384,7 @@ exports.StateRejected = async (req, res) => {
                     padding: 10px;
                     text-align: center;
                     border-radius: 0 0 10px 10px;
-                    color: #8079c5;
+                    color: #162c51;
                     font-size: 14px;
                 }
             </style>
@@ -484,7 +484,7 @@ exports.StateAccept = async (req, res) => {
                     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
                 }
                 .header {
-                    background-color: #8079c5;
+                    background-color: #162c51;
                     padding: 20px;
                     border-radius: 10px 10px 0 0;
                     text-align: center;
@@ -506,7 +506,7 @@ exports.StateAccept = async (req, res) => {
                     padding: 10px;
                     text-align: center;
                     border-radius: 0 0 10px 10px;
-                    color: #8079c5;
+                    color: #162c51;
                     font-size: 14px;
                 }
             </style>
@@ -519,7 +519,6 @@ exports.StateAccept = async (req, res) => {
                 </div>
                 <div class="content">
                     <p>تهانينا! لقد تم قبول طلبك للتقديم على الوظيفة بنجاح.</p>
-                    <p>يرجى متابعة بريدك الإلكتروني للحصول على التفاصيل القادمة.</p>
                 </div>
                 <div class="footer">
                     <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
@@ -674,7 +673,7 @@ exports.hrForgetPassLink = async (req, res) => {
                     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
                 }
                 .header {
-                    background-color: #8079c5;
+                    background-color: #162c51;
                     padding: 20px;
                     border-radius: 10px 10px 0 0;
                     text-align: center;
@@ -695,7 +694,7 @@ exports.hrForgetPassLink = async (req, res) => {
                 .reset-code {
                     font-size: 22px;
                     font-weight: bold;
-                    color: #8079c5;
+                    color: #162c51;
                     margin: 20px 0;
                 }
                 .footer {
@@ -703,7 +702,7 @@ exports.hrForgetPassLink = async (req, res) => {
                     padding: 10px;
                     text-align: center;
                     border-radius: 0 0 10px 10px;
-                    color: #8079c5;
+                    color: #162c51;
                     font-size: 14px;
                 }
             </style>
