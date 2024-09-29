@@ -112,11 +112,11 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
   console.log("the newPassword", newPassword);
 
   try {
-    const graduated = await Graduated.findOne({ email: email });
+    const graduated = await Graduated.find({ email: email });
     console.log("graduated", graduated);
 
     if (!graduated) {
-      return res.status(404).json({ message: "graduated not found" });
+      return res.status(404).json({ message: "هذا المستخدم غير موجود" });
     }
 
     // Check if OTP is valid and not expired
