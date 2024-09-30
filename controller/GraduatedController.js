@@ -73,7 +73,7 @@ exports.updateGraduated = async (req, res) => {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const updatedGraduated = await Graduated.findOneAndUpdate(
+    const updatedGraduated = await Graduated.updateOne(
       { graduated: GId },
       {
         name: name,
@@ -437,9 +437,10 @@ exports.skillsSection = async (req, res) => {
     } else {
       GId = decoded.oid;
     }
-
+    console.log("ddd");
+    console.log(GId);
     // جلب المهارات من جسم الطلب (Body)
-    const skillsArray = req.body;
+    const skillsArray = req.body.skills;
 
     // التحقق من صحة المهارات والتأكد من تحويل كل عنصر إلى نص
     if (!Array.isArray(skillsArray) || skillsArray.length === 0) {
@@ -466,7 +467,7 @@ exports.skillsSection = async (req, res) => {
     }
 
     // العثور على الخريج باستخدام المعرف المستخرج من التوكن
-    const graduated = await Graduated.findOne({ graduated: GId });
+    const graduated = await Graduated.find({ graduated: GId });
     if (!graduated) {
       return res.status(404).json({ message: "Graduated not found" });
     }

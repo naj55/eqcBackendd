@@ -10,6 +10,7 @@ const GraduatedSchema = new schema(
     phone: { type: String },
     NId: { type: String },
     address: { type: String },
+    major: { type: String },
     password: { type: String },
     graduated: {
       type: mongoose.Schema.Types.String,
