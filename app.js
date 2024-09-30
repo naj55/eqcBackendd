@@ -8,6 +8,8 @@ const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
 const colors = require("colors"); // تأكد من تثبيت مكتبة colors إذا لم تكن مثبتة
+const morgan = require("morgan");
+const errorHandler = require("./middleware/errorHandler");
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -32,6 +34,13 @@ app.get("/", (req, res) => {
   res.send("hello world from najla server");
 });
 
+// استخدام Morgan لتسجيل الطلبات
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev")); // تسجيل طلبات مفصلة في بيئة التطوير
+} else {
+  app.use(morgan("common")); // تسجيل طلبات مختصرة في بيئة الإنتاج
+}
+
 const AdminRouter = require("./router/AdminRouter");
 app.use("/admin", AdminRouter);
 
@@ -40,6 +49,15 @@ app.use("/hr", HrRouter);
 
 const GraduatedRoute = require("./router/GraduatedRoute");
 app.use("/graduated", GraduatedRoute);
+
+// معالجة الأخطاء (Error Handling)
+app.use((req, res, next) => {
+  const error = new Error("Not Found");
+  res.status(404);
+  next(error);
+});
+
+app.use(errorHandler);
 
 //server
 app.listen(8000, () => {
