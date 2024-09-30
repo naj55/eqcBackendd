@@ -48,6 +48,55 @@ exports.GraduatedInfo = async (req, res) => {
     });
 };
 
+// exports.updateGraduated = async (req, res) => {
+//   try {
+//     const token = req.headers["authorization"]?.split(" ")[1];
+//     if (!token) {
+//       return res.status(401).json({ error: "No token provided" });
+//     }
+
+//     const decoded = jwt.decode(token);
+//     if (!decoded) {
+//       return res.status(401).json({ error: "Invalid token" });
+//     }
+
+//     let GId;
+//     if (!decoded.oid) {
+//       GId = decoded.result._id;
+//     } else {
+//       GId = decoded.oid;
+//     }
+
+//     const { name, email, phone, NId, address, major } = req.body;
+
+//     if (!name || !email || !phone || !NId || !address || !major) {
+//       return res.status(400).json({ error: "All fields are required" });
+//     }
+
+//     const updatedGraduated = await Graduated.updateOne(
+//       { graduated: GId },
+//       {
+//         name: name,
+//         email: email,
+//         phone: phone,
+//         NId: NId,
+//         address: address,
+//         major: major,
+//       },
+//       { new: true, runValidators: true }
+//     );
+
+//     if (!updatedGraduated) {
+//       return res.status(404).json({ error: "Graduated not found" });
+//     }
+
+//     res.status(200).json(updatedGraduated);
+//   } catch (error) {
+//     console.error("Error updating graduated:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 exports.updateGraduated = async (req, res) => {
   try {
     const token = req.headers["authorization"]?.split(" ")[1];
@@ -63,34 +112,69 @@ exports.updateGraduated = async (req, res) => {
     let GId;
     if (!decoded.oid) {
       GId = decoded.result._id;
+      const { name, email, phone, NId, address, major } = req.body;
+      console.log("all the inputs", req.body);
+      if (!name || !email || !phone || !NId || !address || !major) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+
+      Graduated.findById(GId)
+        .then((findedGraduated) => {
+          findedGraduated.name = name;
+          findedGraduated.email = email;
+          findedGraduated.phone = phone;
+          findedGraduated.NId = NId;
+          findedGraduated.address = address;
+          findedGraduated.major = major;
+
+          findedGraduated
+            .save()
+            .then((updatedGraduated) => {
+              console.log(updatedGraduated);
+              res.status(200).json(updatedGraduated);
+            })
+            .catch((error) => {
+              console.log(error);
+              res.status(404).json({ error: "Graduated cant save" });
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(404).json({ error: "Graduated not found" });
+        });
     } else {
       GId = decoded.oid;
+      const { name, email, phone, NId, address, major } = req.body;
+      console.log("all the inputs", req.body);
+      if (!name || !email || !phone || !NId || !address || !major) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+
+      Graduated.find({ graduated: GId })
+        .then((findedGraduated) => {
+          findedGraduated.name = name;
+          findedGraduated.email = email;
+          findedGraduated.phone = phone;
+          findedGraduated.NId = NId;
+          findedGraduated.address = address;
+          findedGraduated.major = major;
+
+          findedGraduated
+            .save()
+            .then((updatedGraduated) => {
+              console.log(updatedGraduated);
+              res.status(200).json(updatedGraduated);
+            })
+            .catch((error) => {
+              console.log(error);
+              res.status(404).json({ error: "Graduated cant save" });
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.status(404).json({ error: "Graduated not found" });
+        });
     }
-
-    const { name, email, phone, NId, address, major } = req.body;
-
-    if (!name || !email || !phone || !NId || !address || !major) {
-      return res.status(400).json({ error: "All fields are required" });
-    }
-
-    const updatedGraduated = await Graduated.updateOne(
-      { graduated: GId },
-      {
-        name: name,
-        email: email,
-        phone: phone,
-        NId: NId,
-        address: address,
-        major: major,
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedGraduated) {
-      return res.status(404).json({ error: "Graduated not found" });
-    }
-
-    res.status(200).json(updatedGraduated);
   } catch (error) {
     console.error("Error updating graduated:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -249,47 +333,83 @@ exports.applyJob = (req, res) => {
   let GId;
   if (!decoded.oid) {
     GId = decoded.result._id;
+    Graduated.findById(GId)
+      .then((result) => {
+        const IdG = result._id; // Get Graduated ID from database
+        // Check if the user has already applied to this job
+        Application.findOne({ GraduatedId: IdG, Job: Jid })
+          .then((applyedJob) => {
+            if (!applyedJob) {
+              // If not applied, create a new application
+              const newApplication = new Application({
+                GraduatedId: IdG,
+                Graduated: GId,
+                Job: Jid,
+                status: "wait",
+                isDeleted: false,
+              });
+              newApplication
+                .save()
+                .then((result) => {
+                  res.status(200).json(result); // Successful application
+                })
+                .catch((err) => {
+                  res.status(500).json(err); // Error saving application
+                });
+            } else {
+              // If already applied, send a response
+              res
+                .status(400)
+                .json({ message: "You have already applied to this job" });
+            }
+          })
+          .catch((error) => {
+            res.status(500).json(error); // Error checking previous applications
+          });
+      })
+      .catch((err) => {
+        res.status(500).json(err); // Error finding graduated user
+      });
   } else {
     GId = decoded.oid;
-  } // Graduated ID from Token
-
-  Graduated.findOne({ graduated: GId })
-    .then((result) => {
-      const IdG = result._id; // Get Graduated ID from database
-      // Check if the user has already applied to this job
-      Application.findOne({ GraduatedId: IdG, Job: Jid })
-        .then((applyedJob) => {
-          if (!applyedJob) {
-            // If not applied, create a new application
-            const newApplication = new Application({
-              GraduatedId: IdG,
-              Graduated: GId,
-              Job: Jid,
-              status: "wait",
-              isDeleted: false,
-            });
-            newApplication
-              .save()
-              .then((result) => {
-                res.status(200).json(result); // Successful application
-              })
-              .catch((err) => {
-                res.status(500).json(err); // Error saving application
+    Graduated.findOne({ graduated: GId })
+      .then((result) => {
+        const IdG = result._id; // Get Graduated ID from database
+        // Check if the user has already applied to this job
+        Application.findOne({ GraduatedId: IdG, Job: Jid })
+          .then((applyedJob) => {
+            if (!applyedJob) {
+              // If not applied, create a new application
+              const newApplication = new Application({
+                GraduatedId: IdG,
+                Graduated: GId,
+                Job: Jid,
+                status: "wait",
+                isDeleted: false,
               });
-          } else {
-            // If already applied, send a response
-            res
-              .status(400)
-              .json({ message: "You have already applied to this job" });
-          }
-        })
-        .catch((error) => {
-          res.status(500).json(error); // Error checking previous applications
-        });
-    })
-    .catch((err) => {
-      res.status(500).json(err); // Error finding graduated user
-    });
+              newApplication
+                .save()
+                .then((result) => {
+                  res.status(200).json(result); // Successful application
+                })
+                .catch((err) => {
+                  res.status(500).json(err); // Error saving application
+                });
+            } else {
+              // If already applied, send a response
+              res
+                .status(400)
+                .json({ message: "You have already applied to this job" });
+            }
+          })
+          .catch((error) => {
+            res.status(500).json(error); // Error checking previous applications
+          });
+      })
+      .catch((err) => {
+        res.status(500).json(err); // Error finding graduated user
+      });
+  } // Graduated ID from Token
 };
 
 //list for all job that has been applyed
@@ -440,7 +560,7 @@ exports.skillsSection = async (req, res) => {
     console.log("ddd");
     console.log(GId);
     // جلب المهارات من جسم الطلب (Body)
-    const skillsArray = req.body.skills;
+    const skillsArray = req.body;
 
     // التحقق من صحة المهارات والتأكد من تحويل كل عنصر إلى نص
     if (!Array.isArray(skillsArray) || skillsArray.length === 0) {
@@ -635,22 +755,28 @@ exports.ViewGraduate = (req, res) => {
   let GId;
   if (!decoded.oid) {
     GId = decoded.result._id;
+    Graduated.findById(GId)
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res.status(401).json(err);
+      });
   } else {
     GId = decoded.oid;
+    Graduated.findOne({ graduated: GId })
+      .then((result) => {
+        res.status(200).json(result);
+      })
+      .catch((err) => {
+        res.status(401).json(err);
+      });
   }
-
-  Graduated.findOne({ graduated: GId })
-    .then((result) => {
-      res.status(200).json(result);
-    })
-    .catch((err) => {
-      res.status(401).json(err);
-    });
 };
+
 exports.ViewGraduateById = (req, res) => {
   const GId = req.params.Gid;
-
-  Graduated.findOne({ graduated: GId })
+  Graduated.findById(GId)
     .then((result) => {
       res.status(200).json(result);
     })

@@ -313,9 +313,7 @@ exports.StateRejected = async (req, res) => {
       return res.status(404).json({ error: "Application not found" });
     }
 
-    const GID = foundedApp.Graduated;
-    foundedApp.status = "rejected";
-    const savedApp = await foundedApp.save();
+    const GID = foundedApp.GraduatedId;
 
     const graduate = await Graduated.findOne({ graduated: GID });
 
@@ -417,6 +415,8 @@ exports.StateRejected = async (req, res) => {
       }
     });
 
+    foundedApp.status = "rejected";
+    const savedApp = await foundedApp.save();
     return res.status(200).json(savedApp);
   } catch (error) {
     console.error(error);
@@ -435,11 +435,9 @@ exports.StateAccept = async (req, res) => {
       return res.status(404).json({ error: "Application not found" });
     }
 
-    const GID = foundedApp.Graduated;
-    foundedApp.status = "accept";
-    const savedApp = await foundedApp.save();
+    const GID = foundedApp.GraduatedId;
 
-    const graduate = await Graduated.findOne({ graduated: GID });
+    const graduate = await Graduated.findById(GID);
 
     if (!graduate) {
       return res.status(404).json({ error: "Graduate not found" });
@@ -538,6 +536,9 @@ exports.StateAccept = async (req, res) => {
       }
     });
 
+    foundedApp.status = "accept";
+    const savedApp = await foundedApp.save();
+
     return res.status(200).json(savedApp);
   } catch (error) {
     console.error(error);
@@ -554,40 +555,105 @@ exports.StateCandidate = async (req, res) => {
       return res.status(404).json({ error: "Application not found" });
     }
 
-    const GID = foundedApp.Graduated;
+    const GID = foundedApp.GraduatedId;
+    console.log("GID", GID);
     foundedApp.status = "candidate";
-    const savedApp = await foundedApp.save();
 
-    const graduate = await Graduated.findOne({ graduated: GID });
+    const graduate = await Graduated.findById(GID);
+
+    console.log("graduate", graduate);
 
     if (!graduate) {
       return res.status(404).json({ error: "Graduate not found" });
     }
 
-    // const Gemail = graduate.email;
-    // const transporter = nodemailer.createTransport({
-    //   service: "gmail",
-    //   auth: {
-    //     user: "aoleqc@gmail.com",
-    //     pass: "exse plzx hdjy tsrj",
-    //   },
-    // });
+    const Gemail = graduate.email;
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "aoleqc@gmail.com",
+        pass: "exse plzx hdjy tsrj",
+      },
+    });
 
-    // const mailOptions = {
-    //   from: "aoleqc@gmail.com",
-    //   to: Gemail,
-    //   subject: "Sending Email using Node.js",
-    //   text: "لقد تم ترشيحك طلبك للتقديم على الوظيفه",
-    // };
-
-    // transporter.sendMail(mailOptions, function (error, info) {
-    //   if (error) {
-    //     console.log(error);
-    //   } else {
-    //     console.log("Email sent: " + info.response);
-    //   }
-    // });
-
+    const mailOptions = {
+      from: "aoleqc@gmail.com",
+      to: Gemail,
+      subject: "ترشيح طلب التقديم على الوظيفة",
+      html: `
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>ترشيح طلب التقديم على الوظيفة</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    padding: 0;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .container {
+                    width: 100%;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #162c51;
+                    padding: 20px;
+                    border-radius: 10px 10px 0 0;
+                    text-align: center;
+                    color: #fff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+                .content {
+                    padding: 20px;
+                }
+                .content p {
+                    font-size: 18px;
+                    color: #333;
+                }
+                .footer {
+                    background-color: #f5f5f5;
+                    padding: 10px;
+                    text-align: center;
+                    border-radius: 0 0 10px 10px;
+                    color: #162c51;
+                    font-size: 14px;
+                }
+            </style>
+        </head>
+        <body>
+    
+            <div class="container">
+                <div class="header">
+                    <h1>مركز التأهيل الوظيفي</h1>
+                </div>
+                <div class="content">
+                    <p>تهانينا! لقد تم ترشيحك  للتقديم على الوظيفة بنجاح.</p>
+                      <p>سيتم التواصل معك قريباً</p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+    
+        </body>
+        </html>
+      `,
+    };
+    const savedApp = await foundedApp.save();
+    console.log("saved app", savedApp);
     return res.status(200).json(savedApp);
   } catch (error) {
     console.error(error);
