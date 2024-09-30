@@ -464,9 +464,8 @@ exports.skillsSection = async (req, res) => {
     if (filteredSkills.length === 0) {
       return res.status(400).json({ message: "No valid skills found" });
     }
-
     // العثور على الخريج باستخدام المعرف المستخرج من التوكن
-    const graduated = await Graduated.findOne({ graduated: GId });
+    const graduated = await Graduated.find({ graduated: GId });
     if (!graduated) {
       return res.status(404).json({ message: "Graduated not found" });
     }
@@ -707,7 +706,7 @@ exports.getSkills = async (req, res) => {
     }
 
     // جلب بيانات الطالب باستخدام GId
-    const graduated = await Graduated.findOne({ graduated: GId });
+    const graduated = await Graduated.find({ graduated: GId });
 
     if (!graduated) {
       return res.status(404).json({ message: "Graduated not found" });
