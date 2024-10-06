@@ -321,18 +321,20 @@ exports.StateRejected = async (req, res) => {
       return res.status(404).json({ error: "Graduate not found" });
     }
 
-    const Gemail = graduate.email;
+    const outlook = graduate.email;
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: "aoleqc@gmail.com",
-        pass: "exse plzx hdjy tsrj",
+        user: "eqc@aol.edu.sa",
+        pass: "kcfjppbxpgdxpygq",
       },
     });
 
     const mailOptions = {
-      from: "aoleqc@gmail.com",
-      to: Gemail,
+      from: "eqc@aol.edu.sa",
+      to: outlook,
       subject: "رفض طلب التقديم على الوظيفة",
       html: `
         <!DOCTYPE html>
@@ -443,18 +445,20 @@ exports.StateAccept = async (req, res) => {
       return res.status(404).json({ error: "Graduate not found" });
     }
 
-    const Gemail = graduate.email;
+    const outlook = graduate.email;
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: "aoleqc@gmail.com",
-        pass: "exse plzx hdjy tsrj",
+        user: "eqc@aol.edu.sa",
+        pass: "kcfjppbxpgdxpygq",
       },
     });
 
     const mailOptions = {
-      from: "aoleqc@gmail.com",
-      to: Gemail,
+      from: "eqc@aol.edu.sa",
+      to: outlook,
       subject: "قبول طلب التقديم على الوظيفة",
       html: `
         <!DOCTYPE html>
@@ -702,15 +706,17 @@ exports.hrForgetPassLink = async (req, res) => {
 
     await hr.save();
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
       auth: {
-        user: "aoleqc@gmail.com",
-        pass: "exse plzx hdjy tsrj", // Consider using environment variables for sensitive information
+        user: "eqc@aol.edu.sa",
+        pass: "kcfjppbxpgdxpygq",
       },
     });
 
     const mailOptions = {
-      from: "aoleqc@gmail.com",
+      from: "eqc@aol.edu.sa",
       to: email,
       subject: "كود إعادة تعيين كلمة المرور",
       html: `

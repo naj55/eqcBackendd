@@ -84,16 +84,18 @@ exports.adminForgetPassLink = async (req, res) => {
       const link = `http://localhost:5173/reset-password/${result._id}`;
 
       var transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp.office365.com",
+        port: 587,
+        secure: false,
         auth: {
-          user: "eqcAdmin@aol.edu.sa",
-          pass: "pjff ogfg ywwv xofg",
+          user: "eqc@aol.edu.sa",
+          pass: "kcfjppbxpgdxpygq",
         },
       });
 
       var mailOptions = {
-        from: "eqcAdmin@aol.edu.sa",
-        to: "najlams58@gmail.com",
+        from: "eqc@aol.edu.sa",
+        to: "eqc@aol.edu.sa",
         subject: "Sending Email using Node.js",
         text: "link",
       };
@@ -349,15 +351,17 @@ exports.postAddHr = async (req, res) => {
 
   // Set up Nodemailer transport
   const transporter = nodemailer.createTransport({
-    service: "gmail", // or your email service
+    host: "smtp.office365.com",
+    port: 587,
+    secure: false,
     auth: {
-      user: "aoleqc@gmail.com",
-      pass: "exse plzx hdjy tsrj",
+      user: "eqc@aol.edu.sa",
+      pass: "kcfjppbxpgdxpygq",
     },
   });
   // Send OTP email
   const mailOptions = {
-    from: "aoleqc@gmail.com",
+    from: "eqc@aol.edu.sa",
     to: emailInput,
     subject: "Your OTP Code",
     html: `<!DOCTYPE html>
@@ -885,15 +889,17 @@ exports.accebtedJob = (req, res) => {
             res.status(200).json(r);
           });
           var transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: "smtp.office365.com",
+            port: 587,
+            secure: false,
             auth: {
-              user: "aoleqc@gmail.com",
-              pass: "exse plzx hdjy tsrj",
+              user: "eqc@aol.edu.sa",
+              pass: "kcfjppbxpgdxpygq",
             },
           });
 
           var mailOptions = {
-            from: "aoleqc@gmail.com",
+            from: "eqc@aol.edu.sa",
             to: HrEmail,
             subject: "قبول الوظيفة وإضافتها للنظام",
             html: `
@@ -1000,14 +1006,16 @@ exports.rejectedJob = (req, res) => {
             res.status(200).json(r);
           });
           var transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: "smtp.office365.com",
+            port: 587,
+            secure: false,
             auth: {
-              user: "aoleqc@gmail.com",
-              pass: "exse plzx hdjy tsrj",
+              user: "eqc@aol.edu.sa",
+              pass: "kcfjppbxpgdxpygq",
             },
           });
           var mailOptions = {
-            from: "aoleqc@gmail.com",
+            from: "eqc@aol.edu.sa",
             to: HrEmail,
             subject: "إشعار رفض الوظيفة",
             html: `
@@ -1191,10 +1199,12 @@ exports.importFromExcel = async (req, res) => {
   const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
   console.log("ggng");
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.office365.com",
+    port: 587,
+    secure: false,
     auth: {
-      user: "aoleqc@gmail.com",
-      pass: "exse plzx hdjy tsrj",
+      user: "eqc@aol.edu.sa",
+      pass: "kcfjppbxpgdxpygq",
     },
   });
 
@@ -1205,7 +1215,7 @@ exports.importFromExcel = async (req, res) => {
       const otp = Math.floor(100000 + Math.random() * 900000).toString(); // توليد OTP عشوائي
 
       const mailOptions = {
-        from: "aoleqc@gmail.com",
+        from: "eqc@aol.edu.sa",
         to: email,
         subject: "رمز التحقق OTP الخاص بك",
         html: `
