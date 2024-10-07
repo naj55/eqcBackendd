@@ -22,7 +22,7 @@ const Application = require("../model/application");
 exports.createOnce = async (req, res) => {
   const name = "EqcAdmin";
   const password = "AdminSecret$8";
-  const email = "aoleqc@gmail.com";
+  const email = "eqc@aol.edu.sa";
   const hash = await bcrypt.hash(password, salt);
   const admin = new Admin({
     name: name,
