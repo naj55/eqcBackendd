@@ -1,0 +1,16 @@
+version: 1
+backend:
+  phases:
+    preBuild:
+      commands:
+        - npm install # Install dependencies
+    build:
+      commands:
+        - npm start # Start the server
+  artifacts:
+    baseDirectory: . # Assuming the server runs from the root directory
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
