@@ -60,8 +60,8 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 //server
-app.listen(8000, () => {
-  console.log(`💡 server is running on port 8000`.white.bold);
-  console.log("🧿 http://localhost:8000".blue.bold);
+app.listen(3000, () => {
+  console.log(`💡 server is running on port 3000`.white.bold);
+  console.log("🧿 http://localhost:3000".blue.bold);
   console.log("🚀 Ready to go!".yellow.bold);
 });

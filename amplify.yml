@@ -6,11 +6,11 @@ backend:
         - npm install # Install dependencies
     build:
       commands:
-        - npm start # Start the server
+        - npm run build # Adjust if you have a specific build command
   artifacts:
-    baseDirectory: . # Assuming the server runs from the root directory
+    baseDirectory: . # Specify where the built files are located
     files:
-      - "**/*"
+      - "**/*" # Include all files
   cache:
     paths:
       - node_modules/**/*
