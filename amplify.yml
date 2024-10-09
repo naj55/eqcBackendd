@@ -6,9 +6,9 @@ backend:
         - npm install # Install dependencies
     build:
       commands:
-        - npm run build # Adjust if you have a specific build command
+        - npm run build # Adjust this command based on your backend
   artifacts:
-    baseDirectory: . # Specify where the built files are located
+    baseDirectory: . # Specify the directory for the backend
     files:
       - "**/*" # Include all files
   cache:
