@@ -3,12 +3,12 @@ backend:
   phases:
     preBuild:
       commands:
-        - npm install # Install dependencies
+        - npm install # Install backend dependencies
     build:
       commands:
-        - npx nodemon app
+        - npm run build # Adjust as needed for your backend
   artifacts:
-    baseDirectory: . # Specify the directory for the backend
+    baseDirectory: . # Specify the base directory for the backend
     files:
       - "**/*" # Include all files
   cache:
