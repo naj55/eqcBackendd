@@ -65,6 +65,6 @@ const LPORT = process.env.PORT || 3001; // Change 3000 to 3001 or any other avai
 
 app.listen(LPORT, () => {
   console.log(`💡 server is running on port 3000`.white.bold);
-  console.log(`🧿 http://localhost:${process.env.PORT}`.blue.bold);
+  console.log(`🧿 http://localhost:${LPORT}}`.blue.bold);
   console.log("🚀 Ready to go!".yellow.bold);
 });
