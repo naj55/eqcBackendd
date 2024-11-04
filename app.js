@@ -64,7 +64,7 @@ app.use(errorHandler);
 const LPORT = process.env.PORT || 3001; // Change 3000 to 3001 or any other available port
 
 app.listen(LPORT, () => {
-  console.log(`💡 server is running on port 8000`.white.bold);
+  console.log(`💡 server is running on port 3000`.white.bold);
   console.log(`🧿 http://localhost:${process.env.PORT}`.blue.bold);
   console.log("🚀 Ready to go!".yellow.bold);
 });
