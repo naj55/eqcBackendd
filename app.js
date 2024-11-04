@@ -61,10 +61,10 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 //server
-const LPORT = 3001; // Change 3000 to 3001 or any other available port
+const LPORT = process.env.PORT || 3001; // Change 3000 to 3001 or any other available port
 
 app.listen(LPORT, () => {
   console.log(`💡 server is running on port 3000`.white.bold);
-  console.log(`🧿 http://localhost:${LPORT}}`.blue.bold);
+  console.log(`🧿 http://localhost:${process.env.PORT}`.blue.bold);
   console.log("🚀 Ready to go!".yellow.bold);
 });
