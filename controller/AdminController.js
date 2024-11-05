@@ -449,7 +449,7 @@ exports.postAddHr = async (req, res) => {
               <p>يرجى استخدام هذا الرمز في غضون 3 ساعات. إذا لم تطلب رمز التحقق، يرجى تجاهل هذا البريد الإلكتروني.</p>
               <!-- زر تفعيل الحساب -->
               <p>لتفعيل الحساب الرجاء الزيارة:</p>
-              <a href="http://localhost:5173/auth/hr/activate-account" class="activation-button">تفعيل الحساب</a>
+              <a href="https://main.d1gsmzbryhs8m6.amplifyapp.com/auth/hr/activate-account" class="activation-button">تفعيل الحساب</a>
           </div>
           <div class="footer">
               <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
