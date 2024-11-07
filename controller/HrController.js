@@ -11,7 +11,6 @@ const Job = require("../model/Job1");
 const Graduated = require("../model/GraduatedStudent");
 const Application = require("../model/application");
 const Section = require("../model/Section");
-
 exports.verifyOtpAndChangePassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 
@@ -22,13 +21,17 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
       return res.status(404).json({ message: "HR not found" });
     }
 
+    // Convert otpExpires to a timestamp for comparison
+    const otpExpiresTimestamp = new Date(hr.otpExpires).getTime();
+
     // Check if OTP is valid and not expired
-    if (hr.otp !== otp || hr.otpExpires < Date.now()) {
+    if (hr.otp !== otp || otpExpiresTimestamp < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired OTP" });
     }
 
     // Hash the new password
-    const hash = await bcrypt.hash(newPassword, salt);
+    const saltRounds = 10; // Define the salt rounds
+    const hash = await bcrypt.hash(newPassword, saltRounds);
 
     // Update password and clear OTP
     hr.password = hash; // Set the new password
@@ -38,9 +41,13 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
     await hr.save();
     res.status(200).json({ message: "Password changed successfully" });
   } catch (err) {
-    res.status(500).json(err);
+    console.error("Error occurred:", err); // Log the error for debugging
+    res
+      .status(500)
+      .json({ message: "An error occurred while changing the password" });
   }
 };
+
 //Hr jobs add job
 exports.postAddJob = (req, res) => {
   const D = res.locals.decoder;
