@@ -81,7 +81,7 @@ exports.adminForgetPassLink = async (req, res) => {
         }
       );
 
-      const link = `http://localhost:5173/reset-password/${result._id}`;
+      const link = `https://main.d1gsmzbryhs8m6.amplifyapp.com/reset-password/${result._id}`;
 
       var transporter = nodemailer.createTransport({
         host: "smtp.office365.com",
@@ -1266,7 +1266,7 @@ exports.importFromExcel = async (req, res) => {
                     <div class="otp">${otp}</div>
                     <p>يرجى استخدام هذا الرمز خلال 3 ساعات من استلامه لضمان حماية حسابك. إذا لم تطلب رمز التحقق، يُرجى تجاهل هذا البريد الإلكتروني.</p>
                     <p>لتفعيل حسابك، يرجى الضغط على الرابط أدناه:</p>
-                    <a href="http://localhost:5173/auth/graduated/activate-account" class="activation-button">تفعيل الحساب</a>
+                    <a href="https://main.d1gsmzbryhs8m6.amplifyapp.com/auth/graduated/activate-account" class="activation-button">تفعيل الحساب</a>
                 </div>
                 <div class="footer">
                     <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
