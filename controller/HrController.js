@@ -139,21 +139,19 @@ exports.removeJob = async (req, res) => {
       return res.status(404).json({ error: "job not found" });
     }
 
-    foundedjob.isDeleted = true;
-
     // Use find instead of findMany
     const application = await Application.find({ Job: Jid });
 
-    if (application.length === 0) {
-      return res.status(404).json({ error: "application not found" });
+    if (application.length > 0) {
+      for (const one of application) {
+        one.isDeleted = true;
+        await one.save(); // Save each job individually
+      }
     }
 
     // Set isDeleted for each job
-    for (const one of application) {
-      one.isDeleted = true;
-      await one.save(); // Save each job individually
-    }
 
+    foundedjob.isDeleted = true;
     const savedjob = await foundedjob.save();
 
     return res
@@ -162,7 +160,7 @@ exports.removeJob = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
-  }
+  } //end job fun
 };
 
 //admin job update job
