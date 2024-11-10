@@ -210,32 +210,6 @@ exports.listCompanies = (req, res) => {
     });
 };
 
-//admin company delete Company cascade
-// exports.removeCompany0 = (req, res) => {
-//   const Cid = req.params.Cid;
-
-//   Company.findByIdAndDelete(Cid)
-//     .then(() => {
-//       Hr.deleteMany({ company: Cid })
-//         .then((r) => {
-//           Job.deleteMany({ company: Cid })
-//             .then(() => {
-//               console.log("job is deleted");
-//             })
-//             .catch((err) => {
-//               res.status(401).json(err);
-//             });
-//         })
-//         .catch((err) => {
-//           res.status(401).json(err);
-//         });
-//       res.status(200).json("company deleted");
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
-
 exports.removeCompany = async (req, res) => {
   try {
     const Cid = req.params.Cid;
@@ -534,23 +508,6 @@ exports.removeHr = async (req, res) => {
 };
 
 // //admin HR delete Hr
-// exports.removeHrr = (req, res) => {
-//   const Hid = req.params.Hid;
-//   Hr.findByIdAndDelete(Hid)
-//     .then(() => {
-//       Job.deleteMany({ Hr: Hid })
-//         .then(() => {
-//           console.log("job is deleted");
-//         })
-//         .catch((err) => {
-//           res.status(401).json(err);
-//         });
-//       res.status(200).json("Hr has been deleted");
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
 
 //admin Hr update Hr
 exports.editHr = (req, res) => {
@@ -866,7 +823,7 @@ exports.ViewJob = (req, res) => {
 };
 
 exports.requestedJob = (req, res) => {
-  Job.find({ status: "wait" })
+  Job.find({ status: "wait", isDeleted: "false" })
     .populate("company")
     .then((result) => {
       res.status(200).json(result);
