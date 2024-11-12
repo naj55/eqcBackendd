@@ -588,7 +588,7 @@ exports.postAddJob = (req, res) => {
 
 //admin job List job
 exports.listJobs = (req, res) => {
-  Job.find({ isDeleted: false, status: accepted })
+  Job.find({ isDeleted: false, status: "accepted" })
     .populate("company")
     .then((result) => {
       res.status(200).json(result);
