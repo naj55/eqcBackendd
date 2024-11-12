@@ -23,8 +23,13 @@ router.post(
 );
 
 //Hr Job CRUD router
-http: router.post("/addJob", checkToken, HrController.postAddJob);
-router.get("/listJob", checkToken, HrController.listJobs);
+http: router.post(
+  "/addJob",
+  checkToken,
+  checkHrAuthrization,
+  HrController.postAddJob
+);
+router.get("/listJob", checkToken, checkHrAuthrization, HrController.listJobs);
 router.delete(
   "/removeJob/:Jid",
   checkToken,
@@ -37,14 +42,54 @@ router.patch(
   checkHrAuthrization,
   HrController.editJob
 );
-router.get("/ViewJob/:id", checkToken, HrController.ViewJob);
-router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
-router.get("/listApplication/:jid", checkToken, HrController.listApplication);
-router.get("/listJobApplication", checkToken, HrController.listJobApplication);
-router.get("/listCandidate", checkToken, HrController.listCandidate);
-router.patch("/StateRejected/:Aid", HrController.StateRejected);
-router.patch("/StateAccept/:Aid", HrController.StateAccept);
-router.patch("/StateCandidate/:Aid", HrController.StateCandidate);
+router.get(
+  "/ViewJob/:id",
+  checkToken,
+  checkHrAuthrization,
+  HrController.ViewJob
+);
+router.get(
+  "/viewCv/:Gid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.ViewCv
+);
+router.get(
+  "/listApplication/:jid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.listApplication
+);
+router.get(
+  "/listJobApplication",
+  checkToken,
+  checkHrAuthrization,
+  HrController.listJobApplication
+);
+router.get(
+  "/listCandidate",
+  checkToken,
+  checkHrAuthrization,
+  HrController.listCandidate
+);
+router.patch(
+  "/StateRejected/:Aid",
+  checkHrAuthrization,
+  checkToken,
+  HrController.StateRejected
+);
+router.patch(
+  "/StateAccept/:Aid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.StateAccept
+);
+router.patch(
+  "/StateCandidate/:Aid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.StateCandidate
+);
 router.post("/hrForgetPassLink", HrController.hrForgetPassLink);
 router.post("/hrResetPassword", HrController.hrResetPassword);
 module.exports = router;

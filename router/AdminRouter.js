@@ -18,12 +18,8 @@ const upload = multer({ dest: "uploads/" });
 
 //admin company CRUD router
 //router.post("/addtheCompany", AdminController.postAddCompany);
-router.post(
-  "/addCompany",
-
-  AdminController.postAddCompany
-);
-router.get("/listCompanies", AdminController.listCompanies);
+router.post("/addCompany", checkToken, AdminController.postAddCompany);
+router.get("/listCompanies", checkToken, AdminController.listCompanies);
 
 router.delete(
   "/removeCompany/:Cid",
@@ -133,12 +129,42 @@ router.post("/adminlogin", AdminController.adminlogin);
 router.post("/adminForgetPass", AdminController.adminForgetPassLink);
 router.get("/reset-password/:id/:token", AdminController.getAdminResetPass);
 router.post("/reset-password/:id/:token", AdminController.postAdminResetPass);
-router.get("/ViewCompany/:Cid", AdminController.ViewCompany);
-router.get("/ViewGraduate/:Gid", AdminController.ViewGraduate);
-router.get("/ViewJob/:Jid", AdminController.ViewJob);
-router.patch("/accebtedJob/:JId", AdminController.accebtedJob);
-router.patch("/rejectedJob/:JId", AdminController.rejectedJob);
-router.get("/acceptedGraduated", AdminController.acceptedGraduated);
+router.get(
+  "/ViewCompany/:Cid",
+  checkToken,
+  checkAuthrization,
+  AdminController.ViewCompany
+);
+router.get(
+  "/ViewGraduate/:Gid",
+  checkToken,
+  checkAuthrization,
+  AdminController.ViewGraduate
+);
+router.get(
+  "/ViewJob/:Jid",
+  checkToken,
+  checkAuthrization,
+  AdminController.ViewJob
+);
+router.patch(
+  "/accebtedJob/:JId",
+  checkToken,
+  checkAuthrization,
+  AdminController.accebtedJob
+);
+router.patch(
+  "/rejectedJob/:JId",
+  checkToken,
+  checkAuthrization,
+  AdminController.rejectedJob
+);
+router.get(
+  "/acceptedGraduated",
+  checkToken,
+  checkAuthrization,
+  AdminController.acceptedGraduated
+);
 router.delete("/clearJob", AdminController.clearJob);
 
 // Route for CSV upload
@@ -152,6 +178,8 @@ router.post(
 router.post(
   "/uploadGraduatedExcel",
   upload.single("file"),
+  checkToken,
+  checkAuthrization,
   AdminController.importFromExcel
 );
 module.exports = router;
