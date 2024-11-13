@@ -12,7 +12,7 @@ const checkToken = (req, res, next) => {
     res.locals.decoder = decoder;
     next();
   } catch (err) {
-    res.status(404).json(err);
+    res.status(404, "error token").json(err);
   }
 };
 
