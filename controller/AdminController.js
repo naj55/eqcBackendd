@@ -213,34 +213,32 @@ exports.listCompanies = (req, res) => {
 exports.removeCompany = async (req, res) => {
   try {
     const Cid = req.params.Cid;
-    const foundedCompany = await Hr.findOne({ _id: Hid });
+    const foundedCompany = await Company.findOne({ _id: Cid });
 
-    if (!foundedHr) {
-      return res.status(404).json({ error: "HR not found" });
+    if (!foundedCompany) {
+      return res.status(404).json({ error: "company not found" });
     }
-
-    foundedHr.isDeleted = true;
 
     // Use find instead of findMany
-    const HrJobs = await Job.find({ Hr: Hid });
+    const hrs = await Hr.find({ company: Cid });
 
-    // if (HrJobs.length === 0) {
-    //   return res.status(404).json({ error: "Jobs not found" });
-    // }
-
-    // Set isDeleted for each job
-    for (const job of HrJobs) {
-      job.isDeleted = true;
-      await job.save(); // Save each job individually
+    if (hrs.length > 0) {
+      for (const one of hrs) {
+        one.isDeleted = true;
+        await one.save(); // Save each job individually
+      }
     }
 
-    const savedHr = await foundedHr.save();
+    // Set isDeleted for each job
 
-    return res.status(200).json({ savedHr, deletedJobsCount: HrJobs.length });
+    foundedCompany.isDeleted = true;
+    const savedcompany = await foundedCompany.save();
+
+    return res.status(200).json({ savedcompany, deletedHrsCount: hrs.length });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
-  }
+  } //end job fun
 };
 
 //admin company update Company
