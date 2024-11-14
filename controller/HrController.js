@@ -112,24 +112,6 @@ exports.listJobs = (req, res) => {
     });
 };
 
-// //admin job delete job
-// exports.removeJob = (req, res) => {
-//   const Jid = req.params.Jid;
-//   Job.findByIdAndDelete(Jid)
-//     .then(() => {
-//       Application.deleteMany({ Job: Jid })
-//         .then(() => {
-//           console.log("job is deleted");
-//         })
-//         .catch((err) => {
-//           res.status(401).json(err);
-//         });
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
-
 exports.removeJob = async (req, res) => {
   try {
     const Jid = req.params.Jid;
