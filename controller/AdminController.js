@@ -486,11 +486,6 @@ exports.removeHr = async (req, res) => {
     // Use find instead of findMany
     const HrJobs = await Job.find({ Hr: Hid });
 
-    // if (HrJobs.length === 0) {
-    //   return res.status(404).json({ error: "Jobs not found" });
-    // }
-
-    // Set isDeleted for each job
     for (const job of HrJobs) {
       job.isDeleted = true;
       await job.save(); // Save each job individually
@@ -693,18 +688,6 @@ exports.listGraduated = (req, res) => {
       res.status(401).json(err);
     });
 };
-
-// //admin Graduated delete job
-// exports.removeGraduated = (req, res) => {
-//   const Gid = req.params.Gid;
-//   Graduated.findByIdAndDelete(Gid)
-//     .then(() => {
-//       res.status(200).json("Graduated has been deleted");
-//     })
-//     .catch((err) => {
-//       res.status(401).json(err);
-//     });
-// };
 
 exports.removeGraduated = async (req, res) => {
   try {
