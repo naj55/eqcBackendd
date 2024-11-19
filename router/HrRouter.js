@@ -23,17 +23,12 @@ router.post(
 );
 
 //Hr Job CRUD router
-http: router.post(
-  "/addJob",
-  checkToken,
-  checkHrAuthrization,
-  HrController.postAddJob
-);
-router.get("/listJob", checkToken, checkHrAuthrization, HrController.listJobs);
+http: router.post("/addJob", checkToken, HrController.postAddJob);
+router.get("/listJob", checkToken, HrController.listJobs);
 router.delete(
   "/removeJob/:Jid",
   checkToken,
-  checkHrAuthrization,
+
   HrController.removeJob
 );
 router.patch(
