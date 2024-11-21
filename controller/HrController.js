@@ -11,6 +11,7 @@ const Job = require("../model/Job1");
 const Graduated = require("../model/GraduatedStudent");
 const Application = require("../model/application");
 const Section = require("../model/Section");
+
 exports.verifyOtpAndChangePassword = async (req, res) => {
   const { email, otp, newPassword } = req.body;
 

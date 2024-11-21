@@ -12,7 +12,7 @@ const HrController = require("../controller/HrController");
 
 //middeleware
 const checkToken = require("../middleware/checkToken");
-// const  = require("../middleware/checkHrAuthrization");
+const checkHrAuthrization = require("../middleware/checkHrAuthrization");
 const authMiddleware = require("../middleware/authMiddleware");
 
 //Hr Login
@@ -25,16 +25,61 @@ router.post(
 //Hr Job CRUD router
 http: router.post("/addJob", checkToken, HrController.postAddJob);
 router.get("/listJob", checkToken, HrController.listJobs);
-router.delete("/removeJob/:Jid", checkToken, HrController.removeJob);
-router.patch("/editJob/:Jid", checkToken, HrController.editJob);
-router.get("/ViewJob/:id", checkToken, HrController.ViewJob);
+router.delete(
+  "/removeJob/:Jid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.removeJob
+);
+router.patch(
+  "/editJob/:Jid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.editJob
+);
+router.get(
+  "/ViewJob/:id",
+  checkToken,
+  checkHrAuthrization,
+  HrController.ViewJob
+);
 router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
-router.get("/listApplication/:jid", checkToken, HrController.listApplication);
-router.get("/listJobApplication", checkToken, HrController.listJobApplication);
-router.get("/listCandidate", checkToken, HrController.listCandidate);
-router.patch("/StateRejected/:Aid", checkToken, HrController.StateRejected);
-router.patch("/StateAccept/:Aid", checkToken, HrController.StateAccept);
-router.patch("/StateCandidate/:Aid", checkToken, HrController.StateCandidate);
+router.get(
+  "/listApplication/:jid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.listApplication
+);
+router.get(
+  "/listJobApplication",
+  checkToken,
+  checkHrAuthrization,
+  HrController.listJobApplication
+);
+router.get(
+  "/listCandidate",
+  checkToken,
+  checkHrAuthrization,
+  HrController.listCandidate
+);
+router.patch(
+  "/StateRejected/:Aid",
+  checkHrAuthrization,
+  checkToken,
+  HrController.StateRejected
+);
+router.patch(
+  "/StateAccept/:Aid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.StateAccept
+);
+router.patch(
+  "/StateCandidate/:Aid",
+  checkToken,
+  checkHrAuthrization,
+  HrController.StateCandidate
+);
 router.post("/hrForgetPassLink", HrController.hrForgetPassLink);
 router.post("/hrResetPassword", HrController.hrResetPassword);
 module.exports = router;
