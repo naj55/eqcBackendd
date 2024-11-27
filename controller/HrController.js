@@ -55,6 +55,7 @@ exports.postAddJob = (req, res) => {
   const HId = res.locals.decoder.result._id;
 
   NameInput = req.body.jobname;
+  jobType = req.body.jobType;
   sdateInput = req.body.sdate;
   edateInput = req.body.edate;
   departmentInput = req.body.department;

@@ -3,6 +3,9 @@ const schema = mongoose.Schema;
 const JobSchema = new schema(
   {
     jobname: { type: String },
+    jobType: {
+      type: String,
+    },
     sdate: {
       type: Date,
     },
@@ -23,6 +26,7 @@ const JobSchema = new schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Hr",
     },
+
     isDeleted: { type: Boolean, require: true, default: false },
   },
   {
