@@ -48,55 +48,6 @@ exports.GraduatedInfo = async (req, res) => {
     });
 };
 
-// exports.updateGraduated = async (req, res) => {
-//   try {
-//     const token = req.headers["authorization"]?.split(" ")[1];
-//     if (!token) {
-//       return res.status(401).json({ error: "No token provided" });
-//     }
-
-//     const decoded = jwt.decode(token);
-//     if (!decoded) {
-//       return res.status(401).json({ error: "Invalid token" });
-//     }
-
-//     let GId;
-//     if (!decoded.oid) {
-//       GId = decoded.result._id;
-//     } else {
-//       GId = decoded.oid;
-//     }
-
-//     const { name, email, phone, NId, address, major } = req.body;
-
-//     if (!name || !email || !phone || !NId || !address || !major) {
-//       return res.status(400).json({ error: "All fields are required" });
-//     }
-
-//     const updatedGraduated = await Graduated.updateOne(
-//       { graduated: GId },
-//       {
-//         name: name,
-//         email: email,
-//         phone: phone,
-//         NId: NId,
-//         address: address,
-//         major: major,
-//       },
-//       { new: true, runValidators: true }
-//     );
-
-//     if (!updatedGraduated) {
-//       return res.status(404).json({ error: "Graduated not found" });
-//     }
-
-//     res.status(200).json(updatedGraduated);
-//   } catch (error) {
-//     console.error("Error updating graduated:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
 exports.updateGraduated = async (req, res) => {
   try {
     const token = req.headers["authorization"]?.split(" ")[1];
@@ -1011,6 +962,164 @@ exports.graduatedForgetPassLink = async (req, res) => {
 };
 
 exports.graduatedResetPassword = async (req, res) => {
+  const email = req.body.email;
+  const resetCode = req.body.resetCode;
+  const newPassword = req.body.newPassword;
+
+  try {
+    const graduated = await Graduated.findOne({ email });
+    if (!graduated) {
+      return res.status(404).send("الحساب غير موجود");
+    }
+
+    // Check if the reset code is valid and not expired
+    if (
+      graduated.resetCode !== resetCode ||
+      graduated.resetCodeExpiration < Date.now()
+    ) {
+      return res
+        .status(400)
+        .json({ message: "رمز التحقق غير صالح او منتهي الصلاحية" });
+    }
+
+    // Update the password (add your password hashing logic here)
+    const bcrypt = require("bcrypt");
+    graduated.password = await bcrypt.hash(newPassword, 10);
+    graduated.resetCode = undefined; // Clear the reset code
+    graduated.resetCodeExpiration = undefined; // Clear the expiration
+
+    await graduated.save();
+    return res.json({ message: "كلمة المرور تم تغييرها بنجاح" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "خطأ في عملية تغيير كلمة المرور" });
+  }
+};
+
+// إرسال رمز إعادة تعيين كلمة المرور
+exports.GraduatedForgetPassLink = async (req, res) => {
+  const email = req.body.email;
+
+  try {
+    const graduated = await Graduated.findOne({ email });
+    if (!graduated) {
+      return res.status(404).send("graduated not found.");
+    }
+
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString(); // Random 6-digit code
+    graduated.resetCode = resetCode;
+    graduated.resetCodeExpiration = Date.now() + 3600000; // 1 hour
+
+    await graduated.save();
+    const transporter = nodemailer.createTransport({
+      host: "smtp.office365.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: "eqc@aol.edu.sa",
+        pass: "kcfjppbxpgdxpygq",
+      },
+    });
+
+    const mailOptions = {
+      from: "eqc@aol.edu.sa",
+      to: email,
+      subject: "كود إعادة تعيين كلمة المرور",
+      html: `
+        <!DOCTYPE html>
+        <html lang="ar">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>إعادة تعيين كلمة المرور</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f5f5f5;
+                    margin: 0;
+                    padding: 0;
+                    direction: rtl;
+                    text-align: right;
+                }
+                .container {
+                    width: 100%;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    margin: 20px auto;
+                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    background-color: #162c51;
+                    padding: 20px;
+                    border-radius: 10px 10px 0 0;
+                    text-align: center;
+                    color: #fff;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 24px;
+                }
+                .content {
+                    padding: 20px;
+                    text-align: center;
+                }
+                .content p {
+                    font-size: 18px;
+                    color: #333;
+                }
+                .reset-code {
+                    font-size: 22px;
+                    font-weight: bold;
+                    color: #162c51;
+                    margin: 20px 0;
+                }
+                .footer {
+                    background-color: #f5f5f5;
+                    padding: 10px;
+                    text-align: center;
+                    border-radius: 0 0 10px 10px;
+                    color: #162c51;
+                    font-size: 14px;
+                }
+            </style>
+        </head>
+        <body>
+    
+            <div class="container" dir="rtl">
+                <div class="header">
+                    <h1>طلب إعادة تعيين كلمة المرور</h1>
+                </div>
+                <div class="content">
+                    <p>كود إعادة تعيين كلمة المرور الخاص بك هو:</p>
+                    <div class="reset-code">${resetCode}</div>
+                    <p>يرجى استخدام هذا الكود لإعادة تعيين كلمة المرور. الكود صالح لمدة 1 ساعة.</p>
+                </div>
+                <div class="footer">
+                    <p>© 2024 مركز التأهيل الوظيفي. جميع الحقوق محفوظة.</p>
+                </div>
+            </div>
+    
+        </body>
+        </html>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(500).send("Error sending email.");
+      } else {
+        return res.send("Password reset code sent to your email.");
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Internal server error.");
+  }
+};
+
+exports.ResetPassword = async (req, res) => {
   const email = req.body.email;
   const resetCode = req.body.resetCode;
   const newPassword = req.body.newPassword;

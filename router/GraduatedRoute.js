@@ -59,4 +59,9 @@ router.post("/insert", GraduatedController.insertGraduated);
 router.delete("/deleteGraduated/:id", GraduatedController.deleteGraduated);
 router.get("/getAll", GraduatedController.getAll);
 router.post("/login", GraduatedController.GraduatedLogin);
+router.post(
+  "/GraduatedForgetPassLink",
+  GraduatedController.GraduatedForgetPassLink
+);
+router.post("/ResetPassword", GraduatedController.ResetPassword);
 module.exports = router;
