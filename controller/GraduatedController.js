@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const salt = Number(process.env.salt);
 const jwt = require("jsonwebtoken");
+var nodemailer = require("nodemailer");
 
 ///MODELS
 const Company = require("../model/Company");
