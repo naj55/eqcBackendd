@@ -45,7 +45,7 @@ router.get(
 );
 router.get("/viewCv/:Gid", checkToken, HrController.ViewCv);
 router.get(
-  "/listApplication/:jid",
+  "/listApplication/:Jid",
   checkToken,
   checkHrAuthrization,
   HrController.listApplication
@@ -53,33 +53,13 @@ router.get(
 router.get(
   "/listJobApplication",
   checkToken,
-  checkHrAuthrization,
+
   HrController.listJobApplication
 );
-router.get(
-  "/listCandidate",
-  checkToken,
-  checkHrAuthrization,
-  HrController.listCandidate
-);
-router.patch(
-  "/StateRejected/:Aid",
-  checkHrAuthrization,
-  checkToken,
-  HrController.StateRejected
-);
-router.patch(
-  "/StateAccept/:Aid",
-  checkToken,
-  checkHrAuthrization,
-  HrController.StateAccept
-);
-router.patch(
-  "/StateCandidate/:Aid",
-  checkToken,
-  checkHrAuthrization,
-  HrController.StateCandidate
-);
+router.get("/listCandidate", checkToken, HrController.listCandidate);
+router.patch("/StateRejected/:Aid", checkToken, HrController.StateRejected);
+router.patch("/StateAccept/:Aid", checkToken, HrController.StateAccept);
+router.patch("/StateCandidate/:Aid", checkToken, HrController.StateCandidate);
 router.post("/hrForgetPassLink", HrController.hrForgetPassLink);
 router.post("/hrResetPassword", HrController.hrResetPassword);
 module.exports = router;

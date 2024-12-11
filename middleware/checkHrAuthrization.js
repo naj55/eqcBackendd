@@ -5,11 +5,12 @@ require("dotenv").config();
 /////////checkAuthrization for student
 const checkHrAuthrization = (req, res, next) => {
   let decoder = res.locals.decoder;
-  console.log(decoder);
+  console.log("decoder", decoder);
   const Jid = req.params.Jid;
+  console.log("Jid", Jid);
   Job.findById(Jid)
     .then((foundedJob) => {
-      console.log(foundedJob);
+      console.log("foundedJob", foundedJob);
       const id = foundedJob.Hr;
       useridlogedIn = decoder.result._id;
       if (id == useridlogedIn) {

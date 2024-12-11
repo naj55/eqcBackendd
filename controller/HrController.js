@@ -231,7 +231,8 @@ exports.listJobApplication = (req, res) => {
 
 exports.listApplication = (req, res) => {
   const HId = res.locals.decoder.result._id;
-  const Jid = req.params.jid;
+  console.log("controllrt hr", HId);
+  const Jid = req.params.Jid;
 
   Job.find({ Hr: HId, _id: Jid, isDeleted: false })
     .then((jobs) => {
@@ -261,37 +262,52 @@ exports.listApplication = (req, res) => {
       console.error("Error fetching jobs:", error);
       res.status(500).json({ message: "Error fetching jobs", error });
     });
+  return;
 };
 
 exports.listCandidate = async (req, res) => {
   try {
+    // Ensure decoder middleware worked
+    if (
+      !res.locals.decoder ||
+      !res.locals.decoder.result ||
+      !res.locals.decoder.result._id
+    ) {
+      return res.status(400).json({ message: "Invalid or missing HR ID." });
+    }
+
     const HId = res.locals.decoder.result._id;
 
-    const jobs = await Job.find({ Hr: HId, isDeleted: false });
+    // Query jobs for the HR
+    const jobs = await Job.find({ Hr: HId, isDeleted: false }).exec();
+
     if (jobs.length === 0) {
       return res.status(404).json({ message: "No jobs found for this HR ID." });
     }
 
+    // Map job IDs for the query
     const jobIds = jobs.map((job) => job._id);
 
+    // Query applications for these jobs with the "candidate" status
     const applications = await Application.find({
       Job: { $in: jobIds },
       status: "candidate",
     })
       .populate("GraduatedId")
-      .populate("Job");
+      .populate("Job")
+      .exec();
 
-    res.status(200).json(applications);
+    return res.status(200).json(applications);
   } catch (error) {
-    if (error.message.includes("jobs")) {
-      return res.status(500).json({ message: "Error fetching jobs", error });
-    } else {
-      return res
-        .status(500)
-        .json({ message: "Error fetching applications", error });
-    }
+    console.error("Error:", error.message);
+    // Return appropriate error messages
+    return res.status(500).json({
+      message: "An error occurred while fetching data.",
+      error: error.message,
+    });
   }
 };
+
 //change state of graduated to candidate
 
 exports.StateRejected = async (req, res) => {

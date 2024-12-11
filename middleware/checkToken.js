@@ -2,11 +2,11 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const checkToken = (req, res, next) => {
-  console.log("checkToken");
+  // console.log("checkToken");
   // Check for the token in both possible locations
   const header = req.headers.authorization || req.body.headers.Authorization;
 
-  console.log("header", header);
+  // console.log("header", header);
 
   if (!header) {
     return res.status(401).json("You must log in");
