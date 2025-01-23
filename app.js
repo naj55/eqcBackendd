@@ -10,11 +10,15 @@ const jwt = require("jsonwebtoken");
 const colors = require("colors"); // تأكد من تثبيت مكتبة colors إذا لم تكن مثبتة
 const morgan = require("morgan");
 const errorHandler = require("./middleware/errorHandler");
+const path = require("path");
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/uploads", express.static("uploads"));
+app.use(express.static(path.join(__dirname, "uploads")));
 
 // //connect to DB
 const connectDB = async () => {
