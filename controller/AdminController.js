@@ -361,7 +361,7 @@ exports.postAddHr = async (req, res) => {
               box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
           }
           .header {
-              background-color: #8079c5;
+              background-color: #162b50;
               padding: 20px;
               border-radius: 10px 10px 0 0;
               text-align: center;
@@ -381,7 +381,7 @@ exports.postAddHr = async (req, res) => {
           .otp {
               font-size: 22px;
               font-weight: bold;
-              color: #8079c5;
+              color: #162b50;
               margin: 20px 0;
               text-align: center;
           }
@@ -391,7 +391,7 @@ exports.postAddHr = async (req, res) => {
               max-width: 200px;
               margin: 20px auto;
               padding: 10px;
-              background-color: #8079c5;
+              background-color: #162b50;
               color: white;
               text-align: center;
               border-radius: 5px;
@@ -403,7 +403,7 @@ exports.postAddHr = async (req, res) => {
               padding: 10px;
               text-align: center;
               border-radius: 0 0 10px 10px;
-              color: #8079c5;
+              color: #162b50;
               font-size: 14px;
           }
       </style>
@@ -866,7 +866,7 @@ exports.accebtedJob = (req, res) => {
                           box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
                       }
                       .header {
-                          background-color: #8079c5;
+                          background-color: #162b50;
                           padding: 20px;
                           border-radius: 10px 10px 0 0;
                           text-align: center;
@@ -888,7 +888,7 @@ exports.accebtedJob = (req, res) => {
                           padding: 10px;
                           text-align: center;
                           border-radius: 0 0 10px 10px;
-                          color: #8079c5;
+                          color: #162b50;
                           font-size: 14px;
                       }
                   </style>
