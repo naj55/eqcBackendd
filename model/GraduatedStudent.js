@@ -7,8 +7,8 @@ const GraduatedSchema = new schema(
   {
     name: { type: String },
     email: { type: String, unique: true },
-    phone: { type: String },
-    NId: { type: String },
+    phone: { type: String, unique: true },
+    NId: { type: String, unique: true },
     address: { type: String },
     major: { type: String },
     password: { type: String },
