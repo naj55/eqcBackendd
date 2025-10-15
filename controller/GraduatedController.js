@@ -153,14 +153,19 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
   const otp = req.body.otp;
   const newPassword = req.body.newPassword;
   try {
-    const graduated = await Graduated.findOne({ email: email });
+    const graduated = await Graduated.findOne({ email: email }).sort({
+      createdAt: -1,
+    });
     if (!graduated) {
       return res.status(404).json({ message: "الحساب غير موجود" });
     }
 
     // Check if OTP is valid and not expired
-    if (graduated.otp !== otp || graduated.otpExpires < Date.now()) {
-      return res.status(400).json({ message: "خطاء في الرمز السري" });
+    if (graduated.otp !== otp) {
+      return res.status(400).json({ message: "خطأ في كود التفعيل" });
+    }
+    if (graduated.otpExpires < Date.now()) {
+      return res.status(400).json({ message: "كود التفعيل منتهي" });
     }
 
     // Hash the new password
